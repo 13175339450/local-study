@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 使用框架的开发人员提供的 -->
+<beans>
+    <!-- 实体类 -->
+    <bean id="userBean" class="com.hxl.domain.entity.User">
+        <property name="name" value="张三"/>
+        <property name="age" value="18"/>
+    </bean>
+
+    <!-- service类 -->
+    <bean id="serviceBean" class="com.hxl.service.UserService">
+        <property name="userMapper" ref="mapperBean"/>
+    </bean>
+
+    <!-- mapper类 -->
+    <bean id="mapperBean" class="com.hxl.mapper.UserMapper"/>
+</beans>
