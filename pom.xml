@@ -13,6 +13,7 @@
         <module>demo02-factory-pattern</module>
         <module>demo03-bean-instance</module>
         <module>demo04-bean-lifeCycle</module>
+        <module>demo05-cycle-dependency</module>
     </modules>
 
     <properties>

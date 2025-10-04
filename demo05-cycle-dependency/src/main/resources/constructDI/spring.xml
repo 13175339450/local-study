@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- TODO：构造方法注入无法解决循环依赖问题
+          因为Bean的“曝光”要在Bean被实例化之后，而Bean在构造方法里进行属性赋值
+          当赋值另一个Bean依赖时，会暂停实例化（不会曝光）,而对另一个Bean的进行实例化时
+          同时该Bean也要先对属性赋值，发现又依赖第一个Bean，因此第二个Bean也暂停实例化（不会曝光）
+          这时候就导致了死循环！！！
+
+    -->
+    <bean id="stu" class="com.hxl.domain.entity.Student" scope="singleton">
+        <constructor-arg index="0" value="学生"/>
+        <constructor-arg index="1" ref="teach"/>
+    </bean>
+
+    <bean id="teach" class="com.hxl.domain.entity.Teacher" scope="singleton">
+        <constructor-arg index="0" value="老师"/>
+        <constructor-arg index="1" ref="stu"/>
+    </bean>
+</beans>
