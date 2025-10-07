@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>Spring6</module>
+        <module>SpringBoot</module>
     </modules>
 
     <properties>
