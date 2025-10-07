@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.hxl</groupId>
+    <artifactId>spring6</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>demo00-spring6</module>
+        <module>demo02-factory-pattern</module>
+        <module>demo03-bean-instance</module>
+        <module>demo04-bean-lifeCycle</module>
+        <module>demo05-cycle-dependency</module>
+        <module>demo06-my-spring</module>
+        <module>demo07-test-my-spring</module>
+        <module>demo08-annotation-basis</module>
+        <module>demo09-annotation-framework</module>
+        <module>demo10-spring-annotation</module>
+        <module>demo11-proxy</module>
+        <module>demo11-proxy/demo01-static-proxy</module>
+        <module>demo12-spring-aop</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+</project>

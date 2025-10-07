@@ -1,0 +1,19 @@
+“注解”就是给 Java 代码贴的 “特殊标签”，本身不写逻辑，而是告诉程序或工具 “这部分代码该怎么处理”；
+作用是：简化操作，比如标记某个类要被 Spring 管理，不用手动写代码，工具会自动按注解规则干活。
+
+1.@Target 指定注解针对的地方
+ElementType:
+ElementType.TYPE            针对类、接口
+ElementType.FIELD           针对成员变量
+ElementType.METHOD          针对成员方法
+ElementType.PARAMETER       针对方法参数
+ElementType.CONSTRUCTOR     针对构造器
+ElementType.PACKAGE         针对包
+ElementType.ANNOTATION_TYPE 针对注解
+
+2.@Retention 指定注解的保留域
+RetentionPolicy:
+RetentionPolicy.SOURCE 源代码级别，由编译器处理，处理之后就不再保留（编译后的class文件里没有了）
+RetentionPolicy.CLASS 注解信息保留到类对应的 class 文件中（但是运行时没有）
+RetentionPolicy.RUNTIME 由 JVM 读取，运行时使用（用反射）
+

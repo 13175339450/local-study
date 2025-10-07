@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="mysql" class="com.hxl.AutowireAndQualifier.mapper.MySQLMapper"/>
+    <bean id="mongodb" class="com.hxl.AutowireAndQualifier.mapper.MongoDBMapper"/>
+
+    <!-- Set注入 -->
+    <bean id="service01" class="com.hxl.AutowireAndQualifier.service.ServiceImpl">
+        <property name="dataBase" ref="mysql"/>
+    </bean>
+    <bean id="service02" class="com.hxl.AutowireAndQualifier.service.ServiceImpl">
+        <property name="dataBase" ref="mongodb"/>
+    </bean>
+
+    <!-- 构造器注入 -->
+    <bean id="mapperBean" class="com.hxl.AutowireAndQualifier.service.Mapper">
+        <!-- 需要按顺序指定 -->
+        <!-- <constructor-arg name="mongoDBMapper" ref="mongodb"/>-->
+        <!-- <constructor-arg name="mySQLMapper" ref="mysql"/>-->
+
+        <!-- 需要按下标指定 -->
+        <constructor-arg index="0" ref="mongodb"/>
+        <constructor-arg index="1" ref="mysql"/>
+
+        <!-- 按类型指定 -->
+        <!-- <constructor-arg ref="mysql"/>-->
+        <!-- <constructor-arg ref="mongodb"/>-->
+    </bean>
+</beans>

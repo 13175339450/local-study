@@ -1,0 +1,19 @@
+@Resource 注解也可以完成非简单类型注入。那它和 @Autowired 注解有什么区别？
+1.@Resource 注解是 JDK 扩展包中的，也就是说属于 JDK 的一部分。所以该注解是标准注解，更加具有通用性。(JSR-250 标准中制定的注解类型。JSR 是 Java 规范提案。)
+  @Autowired 注解是 Spring 框架自己的。
+
+2.@Resource 注解默认根据名称装配 byName，未指定 name 时，使用属性名作为 name。通过 name 找不到的话会自动启动通过类型 byType 装配。
+  @Autowired 注解默认根据类型装配 byType，如果想根据名称装配，需要配合 @Qualifier 注解一起用。
+
+3.@Resource 注解用在属性上、setter 方法上。
+  @Autowired 注解用在属性上、setter 方法上、构造方法上、构造方法参数上。
+
+@Resource 注解属于 JDK 扩展包，所以不在 JDK 当中，需要额外引入以下依赖:
+【如果是 JDK8 的话不需要额外引入依赖。高于 JDK11 或低于 JDK8 需要引入以下依赖。】
+
+如果你是 Spring6 + 版本请使用这个依赖:
+<dependency>
+    <groupId>jakarta.annotation</groupId>
+    <artifactId>jakarta.annotation-api</artifactId>
+    <version>2.1.1</version>
+</dependency>

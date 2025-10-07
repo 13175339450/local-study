@@ -1,0 +1,36 @@
+*Spring容器支队singleton的Bean进行完整的生命周期管理。
+*如果是prototype作用域的Bean，Spring容器只负责将该Bean初始化完毕。
+*等客户端程序一旦获取该Bean之后，Spring容器就不再管理该对象的生命周期了。
+核心原因归纳：
+职责分离：Spring容器的核心职责是管理它自己所拥有的、长期存在的共享组件（Singleton Beans）。
+        对于那些“一次性”的、交给别人后就无法控制的组件（Prototype Beans），它的职责在“交付”那一刻就结束了。
+控制权转移：Prototype Bean 的生命周期由获取它的客户端代码来控制。Spring容器如果强行管理，
+          会导致内存泄漏和不可预知的行为，因为它无法知道客户端何时不再需要这个Bean。
+
+1.Bean的生命周期：5步
+    1.实例化Bean（调用无参构造函数）
+    2.给Bean属性赋值（调用set方法）
+    3.初始化Bean（调用自定义的init方法）
+    4.使用Bean
+    5.销毁Bean（调用自定义的destroy方法）
+
+2.Bean的生命周期：7步
+    1.实例化Bean（调用无参构造函数）
+    2.给Bean属性赋值（调用set方法）
+    3.Bean后处理器的before方法执行
+    4.初始化Bean（调用自定义的init方法）
+    5.Bean后处理器的after方法执行
+    6.使用Bean
+    7.销毁Bean（调用自定义的destroy方法）
+
+3.Bean的生命周期：10步
+    1.实例化Bean（调用无参构造函数）
+    2.给Bean属性赋值（调用set方法）
+    *** 检查Bean是否实现了Aware的相关接口，并调用相关方法
+    3.Bean后处理器的before方法执行
+    *** 检查Bean是否实现了InitializingBean接口，并调用相关方法
+    4.初始化Bean（调用自定义的init方法）
+    5.Bean后处理器的after方法执行
+    6.使用Bean
+    *** 检查Bean是否实现了DisposableBean接口，并调用相关方法
+    7.销毁Bean（调用自定义的destroy方法）

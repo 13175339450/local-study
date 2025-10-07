@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 创建工厂Bean 并且对成员属性date注入值 -->
+    <bean id="dateFactory" class="com.hxl.factory.DateFactory">
+        <constructor-arg index="0" value="2002-03-21 00:00:00"/>
+    </bean>
+
+    <!-- 利用工厂Bean来辅助创建User类的Bean，注入username的值，并且利用工厂注入birth的值 -->
+    <bean id="user" class="com.hxl.domain.entity.User">
+        <property name="username" value="张三"/>
+        <property name="birth" ref="dateFactory"/>
+    </bean>
+</beans>

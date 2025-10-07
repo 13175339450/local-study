@@ -1,0 +1,24 @@
+Spring 解决循环依赖的机理
+    Spring 为什么可以解决 set + singleton 模式下循环依赖？
+    TODO: 根本的原因在于：这种方式可以做到将 “实例化 Bean” 和 “给 Bean 属性赋值” 这两个动作分开去完成。
+    实例化 Bean 的时候：调用无参数构造方法来完成。此时可以先不给属性赋值，可以提前将该 Bean 对象 “曝光” 给外界。
+    给 Bean 属性赋值的时候：调用 setter 方法来完成。
+    TODO: 两个步骤是完全可以分离开去完成的，并且这两步不要求在同一个时间点上完成。
+    也就是说，Bean 都是单例的，我们可以先把所有的单例 Bean 实例化出来，放到一个集合当中（我们可以称之为缓存），所有的单例 Bean 全部实例化完成之后，以后我们再慢慢的调用 setter 方法给属性赋值。这样就解决了循环依赖的问题。
+
+源码分析：
+DefaultSingletonBeanRegistry 类中有三个比较重要的缓存：
+// 一级缓存Map 存放完整的Bean（流程跑完的）
+private final Map<String, Object> singletonObjects = new ConcurrentHashMap(256);
+
+// 二级缓存Map 存放不完整的Bean（只实例化完，还没属性赋值、初始化）
+private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap(16);
+
+// 三级缓存Map 存放一个Bean的lambda表达式（也是刚实例化完）
+private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap(16);
+
+这三个缓存都是 Map 集合。Map 集合的 key 存储的都是 bean 的 name（bean id）。
+一级缓存存储的是：单例 Bean 对象。完整的单例 Bean 对象，也就是说这个缓存中的 Bean 对象的属性都已经赋值了。是一个完整的 Bean 对象。
+二级缓存存储的是：早期的单例 Bean 对象。这个缓存中的单例 Bean 对象的属性没有赋值。只是一个早期的实例对象。
+三级缓存存储的是：单例工厂对象。这个里面存储了大量的 “工厂对象”，每一个单例 Bean 对象都会对应一个单例工厂对象。
+               这个集合中存储的是，创建该单例对象时对应的那个单例工厂对象。

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<beans>
+    <bean id="stuBean" class="com.hxl.domain.entity.Student">
+        <property name="stuName" value="学生"/>
+        <property name="age" value="18"/>
+        <property name="teacher" ref="teachBean"/>
+    </bean>
+
+    <bean id="teachBean" class="com.hxl.domain.entity.Teacher">
+        <property name="teachName" value="老师"/>
+        <property name="salary" value="10000.0"/>
+    </bean>
+
+    <bean id="serviceBean" class="com.hxl.AutowireAndQualifier.service.TestService">
+        <property name="testMapper" ref="mapperBean"/>
+    </bean>
+
+    <bean id="mapperBean" class="com.hxl.AutowireAndQualifier.mapper.TestMapper"/>
+</beans>

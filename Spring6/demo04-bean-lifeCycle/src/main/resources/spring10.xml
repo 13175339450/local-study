@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--配置Bean后处理器。这个后处理器将作用于 当前配置文件 中所有的bean。-->
+    <bean class="com.hxl.bean10.User10BeanPostProcessor"/>
+
+    <!-- Bean生命周期5步：指定init和destroy方法-->
+    <bean id="user10" class="com.hxl.bean10.User10" init-method="initBean" destroy-method="destroyBean">
+        <!-- 调用set方法赋值 -->
+        <property name="name" value="张三"/>
+    </bean>
+</beans>
