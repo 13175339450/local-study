@@ -1,6 +1,7 @@
 package com.hxl;
 
 import com.alibaba.druid.FastsqlException;
+import com.hxl.bean.Animal;
 import com.hxl.bean.User;
 import com.hxl.service.impl.UserServiceImpl;
 import org.springframework.boot.SpringApplication;
@@ -31,5 +32,9 @@ public class CommonAnnotationMain {
         // 获取UserServiceImpl
         UserServiceImpl serviceBean = context.getBean("userServiceImpl", UserServiceImpl.class);
         System.out.println("==========" + serviceBean + "==========");
+
+        System.out.println("===============测试条件注解===============");
+        Animal animal = context.getBean(Animal.class);
+        System.out.println(animal);
     }
 }
