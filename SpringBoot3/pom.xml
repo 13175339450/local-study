@@ -18,6 +18,7 @@
 
     <modules>
         <module>demo01-common-annotation</module>
+        <module>demo02-property-auto-configuration</module>
     </modules>
 
     <properties>
