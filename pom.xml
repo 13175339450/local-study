@@ -7,10 +7,12 @@
     <groupId>com.hxl</groupId>
     <artifactId>local-study</artifactId>
     <version>1.0-SNAPSHOT</version>
+
     <packaging>pom</packaging>
+
     <modules>
         <module>Spring6</module>
-        <module>SpringBoot</module>
+        <module>SpringBoot3</module>
     </modules>
 
     <properties>
