@@ -8,7 +8,7 @@ import com.hxl.bean.One;
 import com.hxl.bean.Three;
 import com.hxl.bean.Two;
 import com.hxl.bean.User;
-import com.hxl.service.impl.UserServiceImpl;
+import com.customize.service.impl.UserServiceImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;

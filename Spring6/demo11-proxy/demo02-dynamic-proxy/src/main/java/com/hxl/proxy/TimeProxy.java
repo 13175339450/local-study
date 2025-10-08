@@ -1,6 +1,6 @@
 package com.hxl.proxy;
 
-import com.hxl.service.RepositoryService;
+import com.customize.service.RepositoryService;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

@@ -1,9 +1,9 @@
 package com.hxl.client;
 
 import com.hxl.proxy.StaticProxyServiceImpl;
-import com.hxl.service.RepositoryService;
-import com.hxl.service.impl.MySQLServiceImpl;
-import com.hxl.service.impl.OracleServiceImpl;
+import com.customize.service.RepositoryService;
+import com.customize.service.impl.MySQLServiceImpl;
+import com.customize.service.impl.OracleServiceImpl;
 import org.junit.Test;
 
 public class StaticProxyTest {

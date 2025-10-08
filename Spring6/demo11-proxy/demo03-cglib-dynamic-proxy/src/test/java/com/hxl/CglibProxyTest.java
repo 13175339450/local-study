@@ -1,7 +1,7 @@
 package com.hxl;
 
 import com.hxl.proxy.TimeInterceptor;
-import com.hxl.service.impl.OracleService;
+import com.customize.service.impl.OracleService;
 import org.junit.Test;
 import org.springframework.cglib.proxy.Enhancer;
 

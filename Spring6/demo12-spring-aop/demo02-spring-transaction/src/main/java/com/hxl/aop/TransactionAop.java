@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class TransactionAop {
 
-    @Pointcut("execution(* com.hxl.service.*.*(..))")
+    @Pointcut("execution(* com.customize.service.*.*(..))")
     public void pointCut(){}
 
     @Around("pointCut()")

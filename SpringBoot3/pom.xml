@@ -19,6 +19,9 @@
     <modules>
         <module>demo01-common-annotation</module>
         <module>demo02-property-auto-configuration</module>
+        <module>demo03-hxl-customize-starter</module>
+        <module>demo04-hxl-customize-starter-test</module>
+
     </modules>
 
     <properties>

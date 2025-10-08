@@ -1,7 +1,7 @@
 package com.hxl;
 
-import com.hxl.config.UserConfiguration;
-import com.hxl.service.UserService;
+import com.customize.autoConfigure.UserConfiguration;
+import com.customize.service.UserService;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

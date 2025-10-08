@@ -1,7 +1,7 @@
 package com.hxl;
 
-import com.hxl.config.ServiceConfiguration;
-import com.hxl.service.MySQLService;
+import com.customize.autoConfigure.ServiceConfiguration;
+import com.customize.service.MySQLService;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

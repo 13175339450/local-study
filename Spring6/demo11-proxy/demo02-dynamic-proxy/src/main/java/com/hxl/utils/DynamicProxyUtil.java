@@ -1,7 +1,7 @@
 package com.hxl.utils;
 
 import com.hxl.proxy.TimeProxy;
-import com.hxl.service.RepositoryService;
+import com.customize.service.RepositoryService;
 
 import java.lang.reflect.Proxy;
 

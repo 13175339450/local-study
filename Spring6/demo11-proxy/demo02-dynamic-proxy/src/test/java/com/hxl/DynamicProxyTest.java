@@ -1,8 +1,7 @@
 package com.hxl;
 
-import com.hxl.proxy.TimeProxy;
-import com.hxl.service.RepositoryService;
-import com.hxl.service.impl.MySQLService;
+import com.customize.service.RepositoryService;
+import com.customize.service.impl.MySQLService;
 import com.hxl.utils.DynamicProxyUtil;
 import org.junit.Test;
 

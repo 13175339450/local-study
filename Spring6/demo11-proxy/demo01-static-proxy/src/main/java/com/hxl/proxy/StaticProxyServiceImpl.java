@@ -1,6 +1,6 @@
 package com.hxl.proxy;
 
-import com.hxl.service.RepositoryService;
+import com.customize.service.RepositoryService;
 
 public class StaticProxyServiceImpl implements RepositoryService {
 
