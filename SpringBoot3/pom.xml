@@ -21,7 +21,7 @@
         <module>demo02-property-auto-configuration</module>
         <module>demo03-hxl-customize-starter</module>
         <module>demo04-hxl-customize-starter-test</module>
-
+        <module>demo05-boot-logging</module>
     </modules>
 
     <properties>

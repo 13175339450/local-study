@@ -1,0 +1,60 @@
+1.日志默认输出格式如下：
+2025-10-08T19:25:56.497+08:00  INFO 15820 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+解释如下
+时间和日期：毫秒级精度
+日志级别：ERROR, WARN, INFO, DEBUG, or TRACE.
+进程 ID
+----：消息分割符
+线程名：使用 [] 包含
+Logger 名：通常是产生日志的类名
+消息：日志记录的内容
+注意：logback 没有 FATAL 级别，对应的是 ERROR
+
+2.日志级别
+一、日志级别顺序（由低到高）
+ALL, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF
+规则：只会打印指定级别及以上级别的日志。
+二、各日志级别含义
+ALL：打印所有日志。
+TRACE：追踪框架详细流程日志，一般不使用。
+
+DEBUG：开发调试细节日志。
+INFO：关键、感兴趣信息日志。
+WARN：警告但不是错误的信息日志（如：版本过时）。
+ERROR：业务错误日志（如：出现各种异常）。
+
+FATAL：致命错误日志（如：JVM 系统崩溃）。
+OFF：关闭所有日志记录。
+三、默认级别规则
+不指定级别的类，默认使用 root 指定的级别。
+SpringBoot 日志默认级别是 INFO。
+四、日志级别配置方式
+配置格式：在 application.properties/yaml 中，通过 logging.level.<logger-name>=<level> 指定日志级别。
+level 取值范围：TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF（定义在 LogLevel 类中）。
+全局默认配置：root 的 logger-name 为 root，可通过 logging.level.root=warn，让所有未指定日志级别的类，都使用 root 的 warn 级别。
+
+3.日志分组
+日志分组配置技巧与 SpringBoot 预定义日志组
+一、实用技巧：日志分组统一配置
+可将相关的 logger 分组，统一配置日志级别，SpringBoot 支持该方式。
+
+二、SpringBoot 预定义的两个日志组
+组名（Name）	包含的 Logger 列表
+web 	org.springframework.core.codec、org.springframework.http、org.springframework.web、org.springframework.boot.actuate.endpoint.web、org.springframework.boot.web.servlet.ServletContextInitializerBeans
+sql	    org.springframework.jdbc.core、org.hibernate.SQL、org.jooq.tools.LoggerListener
+
+4.日志归档与切割
+每天的日志应该独立分割出来存档。如果使用 logback（SpringBoot 默认整合），可以通过 application.properties/yaml 文件指定日志滚动规则。如果是其他日志系统，需要自行配置（添加 或 log4j2-spring.xml）。
+支持的滚动规则设置如下：
+配置项	描述
+logging.logback.rollingpolicy.file-name-pattern	日志存档的文件名格式（默认值: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz）
+logging.logback.rollingpolicy.clean-history-on-start	应用启动时是否清除以前存档（默认值: false）
+logging.logback.rollingpolicy.max-file-size	存档前，每个日志文件的最大大小（默认值: 10MB）
+logging.logback.rollingpolicy.total-size-cap	日志文件被删除之前，可以容纳的最大大小（默认值: 0B）。设置1GB则磁盘存储超过 1GB 日志后就会删除旧日志文件
+logging.logback.rollingpolicy.max-history	日志文件保存的最大天数 (默认值: 7)
+
+5.自定义日志框架
+导入任何第三方框架，先排除它的日志包，因为 Boot 底层控制好了日志。
+修改 application.properties 配置文件，就可以调整日志的所有行为。如果不够，可以编写日志框架自己的配置文件放在类路径下就行，比如 logback-spring.xml、log4j2-spring.xml。
+如需对接专业日志系统，也只需要把 logback 记录的日志灌到 kafka 之类的中间件，这和 SpringBoot 没关系，都是日志框架自己的配置，修改配置文件即可。
+业务中使用 slf4j-api 记录日志。不要再 sout 了。
