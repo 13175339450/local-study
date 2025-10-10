@@ -1,0 +1,5 @@
+1.配置文件的相关配置项
+SpringMVC 的所有配置 spring.mvc
+Web 场景通用配置 spring.web
+文件上传配置 spring.servlet.multipart
+服务器的配置 server：比如：编码方式
