@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class UserController {
 
-    @GetMapping("user")
+    @GetMapping("getUser")
     public User getUserInfo() {
         return new User()
                 .setUsername("hxl")
