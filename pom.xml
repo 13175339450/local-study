@@ -13,6 +13,7 @@
     <modules>
         <module>Spring6</module>
         <module>SpringBoot3</module>
+        <module>SpringMvc</module>
     </modules>
 
     <properties>
