@@ -32,6 +32,8 @@ http://localhost:8080/springmvc/login?username=zhangsan&userpwd=1111
 4. 做文件上传，一定是post请求。要传的数据不是普通文本。
 5. 做文件下载，一定是get请求。要下载的资源是服务器上的资源。
 
+
+
 域对象:
 对象	            类型	    核心功能	        视图处理	典型使用方式
 Model	        接口	    仅承载模型数据	分离  	作为方法参数，返回字符串视图名
@@ -44,3 +46,26 @@ ModelAndView	类	    同时承载数据和视图	封装	    作为方法返回�
 - 请求处理流程：当请求路径不是JSP时，请求会由前端控制器`DispatcherServlet`处理。
 - `DispatcherServlet`的核心逻辑：它通过核心方法`doDispatch()`，根据请求路径找到对应的处理器方法并调用；
 处理器方法会返回**逻辑视图名称**（也可能直接返回`ModelAndView`对象），底层会将逻辑视图名称转换为`View`对象，再结合`Model`对象封装成`ModelAndView`对象，最终返回给`DispatcherServlet`。
+
+
+
+实现视图机制的核心类与核心接口
+1. DispatcherServlet：前端控制器
+负责接收前端的请求（/login）
+根据请求路径找到对应的处理器方法（UserController#login()）
+执行处理器方法（执行 UserController#login()）
+并且最终返回ModelAndView对象。
+再往下就是处理视图。
+
+2. ViewResolver接口：视图解析器接口（ThymeleafViewResolver实现了ViewResolver接口、InternalResourceViewResolver也是实现了ViewResolver接口....）
+这个接口做什么事儿？
+这个接口作用是将 逻辑视图名称 转换为 物理视图名称。
+并且最终返回一个View接口对象。
+核心方法是什么？
+View resolveViewName(String viewName, Locale locale) throws Exception;
+
+3. View接口：视图接口（ThymeleafView实现了View接口、InternalResourceView也实现了View接口.....）
+这个接口做什么事儿？
+这个接口负责将模板语法的字符串转换成html代码，并且将html代码响应给浏览器。（渲染。）
+核心方法是什么？
+void render(@Nullable Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
