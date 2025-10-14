@@ -130,3 +130,35 @@ public interface View {
       一个类实现ViewResolver接口，实现其中的resolveViewName方法。
       另一个类实现View接口，实现其中的render方法。
 */
+
+
+TODO：@ResponseBody 注解（非常重要，使用非常多，因为以后大部分的请求都是AJAX请求）
+     @GetMapping("/ajax")
+     @ResponseBody
+     public String ajax(){
+         return "hello ajax, my name is Spring MVC!";
+     }
+
+     重点：一旦处理器方法上添加了 @ResponseBody 注解，那么 return 返回语句，返回的将不是一个 “逻辑视图名称” 了。而是直接将返回结果采用字符串的形式响应给浏览器。
+     底层实现原理实际上代替的就是：
+         PrintWriter out = response.getWriter();
+         out.print("hello ajax, my name is Spring MVC!");
+
+     以上程序使用的HTTP消息转换器是：StringHttpMessageConverter。
+
+     @GetMapping("/ajax")
+     @ResponseBody
+     public User ajax() {
+         User user = new User(111222L, "zhangsan", "123");
+         return user;
+     }
+
+     当一个处理器方法上面有 @ResponseBody注解，并且返回的是一个java对象，例如user，那么springmvc框架，会自动将user对象转换成json格式的字符串，响应给浏览器。
+     当然，你必须要在pom.xml文件中引入一个可以处理json的依赖，例如jackson：
+         <dependency>
+             <groupId>com.fasterxml.jackson.core</groupId>
+             <artifactId>jackson-databind</artifactId>
+             <version>2.17.0</version>
+         </dependency>
+
+     以上程序中使用的消息转换器是：MappingJackson2HttpMessageConverter
