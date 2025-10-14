@@ -130,3 +130,27 @@ public interface View {
       一个类实现ViewResolver接口，实现其中的resolveViewName方法。
       另一个类实现View接口，实现其中的render方法。
 */
+
+
+请求转发和重定向原理：
+转发： return "forward:/b" 底层创建的是 InternalResourceView 对象
+重定向： return "redirect:/b" 底层创建的是 RedirectView 对象
+
+
+
+关于静态资源处理：
+假设我们在webapp目录下有static目录，static目录下有touxiang.jpeg图片。
+我们可以在浏览器地址栏上直接访问：http://localhost:8080/springmvc/static/img/touxiang.jpeg 吗？不行。
+因为会走DispatcherServlet，导致发生404错误。
+
+怎么办？两种解决方案：
+第一种解决方案：开启默认的Servlet处理
+在Tomcat服务器中提供了一个默认的Servlet，叫做：org.apache.catalina.servlets.DefaultServlet
+在CATALINA_HOME/conf/web.xml文件中，有这个默认的Servlet的相关配置。
+不过，这个默认的Servlet默认情况下是不开启的。
+你需要在springmvc.xml文件中使用以下配置进行开启：
+    <mvc:default-servlet-handler/>
+    <mvc:annotation-driven/>
+开启之后的作用是，当你访问 http://localhost:8080/springmvc/static/img/touxiang.jpeg的时候，
+默认先走 DispatcherServlet，如果发生404错误的话，会自动走DefaultServlet，然后DefaultServlet
+帮你定位静态资源。
