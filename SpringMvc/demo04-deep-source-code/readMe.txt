@@ -53,17 +53,17 @@ HandlerExecutionChain mappedHandler = getHandler(processedRequest);
    }
 
    重点：
-   我们处理请求的第一步代码是：`HandlerExecutionChain mappedHandler = getHandler(request);`
-   其本质上是调用了：`HandlerExecutionChain handler = mapping.getHandler(request);`
+   我们处理请求的第一步代码是：HandlerExecutionChain mappedHandler = getHandler(request);
+   其本质上是调用了：HandlerExecutionChain handler = mapping.getHandler(request);
 
    mapping变量就是 HandlerMapping。
    HandlerMapping是一个接口：
    翻译为处理器映射器，专门负责映射的。就是本质上根据请求路径去映射处理器方法的。
    HandlerMapping接口下有很多实现类：
-   例如其中一个比较有名的、常用的：`RequestMappingHandlerMapping`
-   这个 `RequestMappingHandlerMapping` 叫做：`@RequestMapping`注解专用的处理器映射器对象。
+   例如其中一个比较有名的、常用的：RequestMappingHandlerMapping
+   这个 RequestMappingHandlerMapping 叫做：@RequestMapping注解专用的处理器映射器对象。
 
-   当然，如果你没有使用 `@RequestMapping`注解，
+   当然，如果你没有使用 @RequestMapping注解，
    也可以写xml配置文件来进行映射，那个时候对应的就是其他的HandlerMapping接口的实现类了。
    TODO：所有的 HandlerMapping 对象都是在服务器启动阶段创建的，并且存放在集合中。
    public class DispatcherServlet{
@@ -136,3 +136,60 @@ protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletExcepti
     }
 }
 
+TODO：三：执行对应的拦截器的 PreHandler 方法
+DispatcherServlet:
+if (!mappedHandler.applyPreHandle(processedRequest, response)) {
+    return;
+}
+
+HandlerExecutionChain:
+boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    for (int i = 0; i < this.interceptorList.size(); i++) {
+        HandlerInterceptor interceptor = this.interceptorList.get(i);
+        if (!interceptor.preHandle(request, response, this.handler)) {
+            triggerAfterCompletion(request, response, null);
+            return false;
+        }
+        this.interceptorIndex = i;
+    }
+    return true;
+}
+
+遍历List集合，从List集合中取出每一个 HandlerInterceptor对象，调用 preHandle，i++，可见是顺序调用。
+
+TODO：四： HandlerAdapter 调用处理器方法，返回 ModelAndView 对象
+关于调用处理器方法:
+mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+
+ha 是处理器适配器
+mv 是ModelAndView对象
+
+这个方法是最核心的，调用请求路径对应的HandlerMethod。（调用处理器方法。）
+
+ha是HandlerAdapter，如果是 @RequestMapping 注解对应的，那么就是 RequestMappingHandlerAdapter:
+
+RequestMappingHandlerAdapter:
+protected ModelAndView handleInternal(HttpServletRequest request,
+        HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+    mav = invokeHandlerMethod(request, response, handlerMethod);
+}
+
+protected ModelAndView invokeHandlerMethod(HttpServletRequest request,
+        HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+    // 获取一个数据绑定工厂
+    WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
+    // 获取一个可调用的处理器方法
+    ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
+    // 给可调用的方法绑定数据
+    invocableMethod.setDataBinderFactory(binderFactory);
+    // 给可调用的方法设置参数
+    invocableMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
+    // 可调用的方法执行了。
+    invocableMethod.invokeAndHandle(webRequest, mavContainer);
+}
+
+在HandlerAdapter的核心事情：
+将前端提交的form数据通过 HttpMessageConverter 将其转换成 POJO对象。（数据转换）
+并将数据绑定到 HandlerMethod 对象上。
+调用HandlerMethod。
+返回ModelAndView。
