@@ -16,6 +16,7 @@
         <module>demo02-mvc-http-entity</module>
         <module>demo03-mvc-source-code</module>
         <module>demo04-deep-source-code</module>
+        <module>demo05-spring-start-source-code</module>
     </modules>
 
     <artifactId>SpringMvc</artifactId>
