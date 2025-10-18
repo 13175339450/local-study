@@ -28,10 +28,10 @@
       <scope>provided</scope> 
     </dependency>  
     <!--logback日志依赖-->  
-    <dependency> 
-      <groupId>ch.qos.logback</groupId>  
-      <artifactId>logback-classic</artifactId> 
-    </dependency>  
+    <!--    <dependency> -->  
+    <!--      <groupId>ch.qos.logback</groupId>  -->  
+    <!--      <artifactId>logback-classic</artifactId> -->  
+    <!--    </dependency>  -->  
     <!--thymeleaf和spring6的整合依赖-->  
     <dependency> 
       <groupId>org.thymeleaf</groupId>  
@@ -39,7 +39,8 @@
     </dependency>  
     <dependency> 
       <groupId>org.projectlombok</groupId>  
-      <artifactId>lombok</artifactId> 
+      <artifactId>lombok</artifactId>  
+      <version>1.18.40</version> 
     </dependency> 
   </dependencies> 
 </project>
