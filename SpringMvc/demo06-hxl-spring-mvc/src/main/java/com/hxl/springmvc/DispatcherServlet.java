@@ -1,6 +1,8 @@
 package com.hxl.springmvc;
 
 import com.hxl.springmvc.constant.Const;
+import com.hxl.springmvc.context.ApplicationContext;
+import com.hxl.springmvc.context.WebApplicationContext;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -38,9 +40,10 @@ public class DispatcherServlet extends HttpServlet {
         String configLocation =
                 servletConfig.getInitParameter(Const.CONTEXT_CONFIG_LOCATION);
 
+        String springPath = null;
         if (configLocation.trim().startsWith(Const.CLASS_PATH)) {
             // 获取类路径下的spring.xml文件
-            String springPath = Thread.currentThread()
+            springPath = Thread.currentThread()
                     .getContextClassLoader()
                     // 截取 classpath:spring.xml 里面的 spring.xml
                     .getResource(configLocation.substring(Const.CLASS_PATH.length()))
@@ -48,8 +51,13 @@ public class DispatcherServlet extends HttpServlet {
 
             // 编码设置为UTF-8，防止乱码 该路径是本地的绝对路径！ 类路径 -> 本地系统绝对路径
             springPath = URLDecoder.decode(springPath, Charset.defaultCharset());
-
         }
+        // 创建WebApplicationContext对象
+        ApplicationContext webApplicationContext =
+                new WebApplicationContext(springPath, this.getServletContext());
+
+        // webApplicationContext 代表的就是Spring Web容器，我们最好将其存储到servlet上下文中，以便后续使用
+        this.getServletContext().setAttribute(Const.WEB_APPLICATION_CONTEXT, webApplicationContext);
 
     }
 
