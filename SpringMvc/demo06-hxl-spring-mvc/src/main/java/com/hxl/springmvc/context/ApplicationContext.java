@@ -7,9 +7,11 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,12 +21,19 @@ public class ApplicationContext {
 
     Map<String, Object> beanMap = new HashMap<>();
 
+    /**
+     * TODO
+     *  根据XML配置文件，从里解析
+     *  1.组件的扫描包路径 2.视图解析器 3.拦截器 4.处理器映射器 5.处理器适配器
+     *  初始化上面的所有的组件（SpringMVC必备组件）
+     */
     public ApplicationContext(String springPath) {
         try {
             // 解析xml文件
             SAXReader reader = new SAXReader();
             Document document = reader.read(new File(springPath));
-            // 组件扫描
+
+            // 组件扫描 并注入IoC容器
             Element componentScanElement = (Element) document.selectSingleNode("/beans/component-scan");
             componentScan(componentScanElement);
 
@@ -58,10 +67,48 @@ public class ApplicationContext {
 
     }
 
-    private void createViewResolver(Element viewResolverElement) {
+    private void createViewResolver(Element viewResolverElement) throws Exception {
+        String className = viewResolverElement.attributeValue(Const.BEAN_TAG_CLASS_ATTRIBUTE);
+        // 通过反射机制创建对象
+        Class<?> clazz = Class.forName(className);
+        Object instance = clazz.getConstructor().newInstance();
+        // 获取当前bean节点下子节点property
+        List<Element> propertyElem = viewResolverElement.elements(Const.PROPERTY_TAG_NAME);
 
+        for (Element element : propertyElem) {
+            // 属性名
+            String fieldName = element.attributeValue(Const.PROPERTY_NAME);
+
+            // 获取对应的Set方法名
+            String setMethodName = fieldNameToSetMethod(fieldName);
+
+            // 属性值
+            String fieldValue = element.attributeValue(Const.PROPERTY_VALUE);
+
+            // 获取Set方法并且调用
+            Method setMethod = clazz.getDeclaredMethod(setMethodName, String.class);
+            setMethod.invoke(instance, fieldValue);
+        }
+        // 添加到IoC容器 将简单类名首字母变小写当作beanName
+        beanMap.put(capitalizeFirstLetter(clazz.getSimpleName()), instance);
     }
 
+    private String fieldNameToSetMethod(String fieldName) {
+        return "set" + firstCharUpperCase(fieldName);
+    }
+
+    private String firstCharUpperCase(String fieldName) {
+        return (fieldName.charAt(0) + "").toUpperCase() + fieldName.substring(1);
+    }
+
+    /**
+     * TODO
+     *  1.根据解析XML的扫描包的元素对象，从里面解析出要扫描的组件包的 类路径
+     *  2.根据类路径获取相对路径，并且利用当前线程的类加载器，获取 系统绝对路径
+     *  3.根据系统绝对路径，获取该路径下的所有文件，并且解析其中的.class文件
+     *  4.如果该class文件上加了@Controller注解，则尝试对其进行实例化，并放入IoC容器（beanMap）
+     *  5.提取key为类名的首字母小写
+     */
     private void componentScan(Element componentScanElement) throws Exception {
         // 扫描组件包
         String basePackage = componentScanElement.attributeValue(Const.BASE_PACKAGE);

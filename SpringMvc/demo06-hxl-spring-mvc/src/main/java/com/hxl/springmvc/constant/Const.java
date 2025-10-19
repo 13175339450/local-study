@@ -33,4 +33,20 @@ public class Const {
      * class文件
      */
     public static final String SUFFIX_CLASS = ".class";
+
+    /**
+     * SpringMVC中Bean标签的Class属性
+     */
+    public static final String CLASS_ATTRIBUTE = "class";
+
+    public static final String BEAN_TAG_CLASS_ATTRIBUTE = "beanTagClassAttribute";
+
+    /**
+     * property 标签的名字。
+     */
+    public static final String PROPERTY_TAG_NAME = "property";
+
+    public static final String PROPERTY_NAME = "name";
+
+    public static final String PROPERTY_VALUE = "value";
 }
