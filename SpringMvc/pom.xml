@@ -17,6 +17,8 @@
         <module>demo03-mvc-source-code</module>
         <module>demo04-deep-source-code</module>
         <module>demo05-spring-start-source-code</module>
+        <module>demo06-hxl-spring-mvc</module>
+        <module>demo07-hxl-mvc-test</module>
     </modules>
 
     <artifactId>SpringMvc</artifactId>
