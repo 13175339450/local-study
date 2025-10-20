@@ -49,4 +49,19 @@ public class Const {
     public static final String PROPERTY_NAME = "name";
 
     public static final String PROPERTY_VALUE = "value";
+
+    /**
+     * 视图解析器 beanName
+     */
+    public static final String VIEW_RESOLVER = "viewResolver";
+
+    /**
+     * List<Interceptor>的 beanName
+     */
+    public static final String INTERCEPTORS = "interceptors";
+
+    /**
+     *
+     */
+    public static final String HANDLER_MAPPING = "handlerMapping";
 }

@@ -2,6 +2,8 @@ package com.hxl.springmvc.context;
 
 import com.hxl.springmvc.annotation.Controller;
 import com.hxl.springmvc.constant.Const;
+import com.hxl.springmvc.handler.HandlerInterceptor;
+import com.hxl.springmvc.handler.mapping.HandlerMapping;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -10,6 +12,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,15 +59,65 @@ public class ApplicationContext {
         }
     }
 
+    // 自己手写
     private void createHandlerAdapter(String defaultPackage) {
     }
 
-    private void createHandlerMapping(String defaultPackage) {
+    private void createHandlerMapping(String defaultPackage) throws Exception {
+        // 类路径包名 转换成 类路径
+        String relativePath = defaultPackage.replace(".", "/");
+        // 利用类加载器，获取系统绝对路径
+        String absolutePath = Thread.currentThread()
+                .getContextClassLoader()
+                .getResource(relativePath)
+                .getPath();
+        // 对经过 URL 编码的 absolutePath 字符串进行解码，使用系统默认的字符集（Charset.defaultCharset()），避免乱码
+        absolutePath = URLDecoder.decode(absolutePath, Charset.defaultCharset());
+        // 利用文件流，读取系统路径下的class文件
+        File file = new File(absolutePath);
+        // 获取路径下所有文件
+        File[] files = file.listFiles();
+        for (File f : files) {
+            // 是以.class结尾的class文件
+            String fileName = f.getName();
+            // 是class文件
+            if (fileName.startsWith(Const.SUFFIX_CLASS)) {
+                // 截取类名
+                String simpleName = fileName.substring(0, fileName.lastIndexOf("."));
+                // 获取全限定名 com.hxl...HandlerMapping
+                String fullyQualifiedName = defaultPackage + "." + simpleName;
 
+                Class<?> clazz = Class.forName(fullyQualifiedName);
+                // 实现了HandlerMapping接口的才创建对象
+                if (HandlerMapping.class.isAssignableFrom(clazz)) {
+                    // 利用反射 获取实例对象
+                    Object instance = Class.forName(fullyQualifiedName).getConstructor().newInstance();
+                    // 存入beanMap里
+                    beanMap.put(Const.HANDLER_MAPPING, instance);
+                    return; // 这里假设只有一个
+                }
+            }
+        }
     }
 
-    private void createInterceptors(Element interceptorsElement) {
-
+    private void createInterceptors(Element interceptorsElement) throws Exception {
+        // 存储拦截器的List集合
+        List<HandlerInterceptor> interceptors = new ArrayList<>();
+        // 获取该标签下所有的bean标签
+        List<Element> beans = interceptorsElement.elements("bean");
+        // 遍历bean标签
+        for (Element bean : beans) {
+            // 获取该标签的 value 值，也就是全类名
+            String className = bean.attributeValue(Const.BEAN_TAG_CLASS_ATTRIBUTE);
+            // 通过反射创建实例对象
+            Object instance = Class.forName(className)
+                    .getConstructor()
+                    .newInstance();
+            // 将拦截器对象放入集合里
+            interceptors.add((HandlerInterceptor) instance);
+        }
+        // 将拦截器集合 存入beanMap里
+        beanMap.put(Const.INTERCEPTORS, interceptors);
     }
 
     private void createViewResolver(Element viewResolverElement) throws Exception {
@@ -90,7 +143,7 @@ public class ApplicationContext {
             setMethod.invoke(instance, fieldValue);
         }
         // 添加到IoC容器 将简单类名首字母变小写当作beanName
-        beanMap.put(capitalizeFirstLetter(clazz.getSimpleName()), instance);
+        beanMap.put(Const.VIEW_RESOLVER, instance);
     }
 
     private String fieldNameToSetMethod(String fieldName) {
