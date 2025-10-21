@@ -1,10 +1,13 @@
 package com.hxl.springmvc.context;
 
 import com.hxl.springmvc.annotation.Controller;
+import com.hxl.springmvc.annotation.RequestMapping;
 import com.hxl.springmvc.constant.Const;
 import com.hxl.springmvc.handler.HandlerInterceptor;
+import com.hxl.springmvc.handler.HandlerMethod;
 import com.hxl.springmvc.handler.adapter.HandlerAdapter;
 import com.hxl.springmvc.handler.mapping.HandlerMapping;
+import com.hxl.springmvc.request.RequestMappingInfo;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -39,7 +42,7 @@ public class ApplicationContext {
 
             // 组件扫描 并注入IoC容器
             Element componentScanElement = (Element) document.selectSingleNode("/beans/component-scan");
-            componentScan(componentScanElement);
+            Map<RequestMappingInfo, HandlerMethod> map = componentScan(componentScanElement);
 
             // 创建视图解析器
             Element viewResolverElement = (Element) document.selectSingleNode("/beans/bean");
@@ -50,7 +53,7 @@ public class ApplicationContext {
             createInterceptors(interceptorsElement);
 
             // 创建org.springmvc.web.servlet.mvc.method.annotation下的所有的HandlerMapping
-            createHandlerMapping(Const.DEFAULT_PACKAGE);
+            createHandlerMapping(Const.DEFAULT_PACKAGE, map);
 
             // 创建org.springmvc.web.servlet.mvc.method.annotation下的所有的HandlerAdapter
             createHandlerAdapter(Const.DEFAULT_PACKAGE);
@@ -101,7 +104,7 @@ public class ApplicationContext {
         beanMap.put(Const.HANDLER_ADAPTER, handlerAdapters);
     }
 
-    private void createHandlerMapping(String defaultPackage) throws Exception {
+    private void createHandlerMapping(String defaultPackage, Map<RequestMappingInfo, HandlerMethod> map) throws Exception {
         // 存储处理器映射器的集合
         List<HandlerMapping> handlerMappings = new ArrayList<>();
 
@@ -132,7 +135,11 @@ public class ApplicationContext {
                 // 实现了HandlerMapping接口的才创建对象
                 if (HandlerMapping.class.isAssignableFrom(clazz)) {
                     // 利用反射 获取实例对象
-                    Object instance = Class.forName(fullyQualifiedName).getConstructor().newInstance();
+                    // Object instance = Class.forName(fullyQualifiedName).getConstructor().newInstance();
+                    // 调用有参构造方法
+                    Object instance = Class.forName(fullyQualifiedName)
+                            .getDeclaredConstructor(Map.class)
+                            .newInstance(map);
                     // 存入集合里
                     handlerMappings.add((HandlerMapping) instance);
                 }
@@ -204,7 +211,10 @@ public class ApplicationContext {
      *  4.如果该class文件上加了@Controller注解，则尝试对其进行实例化，并放入IoC容器（beanMap）
      *  5.提取key为类名的首字母小写
      */
-    private void componentScan(Element componentScanElement) throws Exception {
+    private Map<RequestMappingInfo, HandlerMethod> componentScan(Element componentScanElement)
+            throws Exception {
+        Map<RequestMappingInfo, HandlerMethod> map = new HashMap<>();
+
         // 扫描组件包
         String basePackage = componentScanElement.attributeValue(Const.BASE_PACKAGE);
         // 获取组件包的相对路径
@@ -227,18 +237,35 @@ public class ApplicationContext {
                 String className = basePackage + "." + simpleClassName;
 
                 // 实例化Controller对象：如果类上有@Controller注解，则将其实例化并放入IoC容器中
-                Class<?> aClass = Class.forName(className);
-                if (aClass.isAnnotationPresent(Controller.class)) {
+                Class<?> clazz = Class.forName(className);
+                if (clazz.isAnnotationPresent(Controller.class)) {
                     // 实例化对象
-                    Object instance = aClass.getConstructor().newInstance();
+                    Object instance = clazz.getConstructor().newInstance();
                     // 将实例对象放入IoC容器：beanMap里
                     // 设置 key 值：类首字母小写
                     String beanName = capitalizeFirstLetter(simpleClassName);
                     // 放入IoC容器
                     beanMap.put(beanName, instance);
+
+                    // 每一个ControllerBean里有很多个HandlerMethod方法
+                    Method[] methods = clazz.getDeclaredMethods();
+                    for (Method method : methods) {
+                        //需要往 Map<RequestMappingInfo, HandlerMethod> 里赋值
+                        RequestMappingInfo mappingInfo = new RequestMappingInfo();
+                        // 获取@RequestMapping注解里标注的属性
+                        RequestMapping annotation = clazz.getAnnotation(RequestMapping.class);
+                        mappingInfo.setRequestURI(annotation.value()[0]);
+                        mappingInfo.setRequestMethod(annotation.method().toString());
+
+                        HandlerMethod handlerMethod = new HandlerMethod();
+                        handlerMethod.setHandler(instance); // ControllerBean
+                        handlerMethod.setMethod(method); // 处理器方法
+                    }
+
                 }
             }
         }
+        return map;
     }
 
     private String capitalizeFirstLetter(String simpleClassName) {
