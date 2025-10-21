@@ -1,0 +1,20 @@
+package com.hxl.pojo;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User implements Human {
+
+    private String name;
+
+    private String address;
+
+    @Override
+    public void eat() {
+        System.out.println("User to eat...");
+    }
+}

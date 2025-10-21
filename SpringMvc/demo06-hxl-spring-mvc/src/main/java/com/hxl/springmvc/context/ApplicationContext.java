@@ -3,6 +3,7 @@ package com.hxl.springmvc.context;
 import com.hxl.springmvc.annotation.Controller;
 import com.hxl.springmvc.constant.Const;
 import com.hxl.springmvc.handler.HandlerInterceptor;
+import com.hxl.springmvc.handler.adapter.HandlerAdapter;
 import com.hxl.springmvc.handler.mapping.HandlerMapping;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -60,19 +61,59 @@ public class ApplicationContext {
     }
 
     // 自己手写
-    private void createHandlerAdapter(String defaultPackage) {
+    private void createHandlerAdapter(String defaultPackage) throws Exception {
+        // 存取处理器适配器Bean的集合
+        List<HandlerAdapter> handlerAdapters = new ArrayList<>();
+
+        // 将包名 com.hxl.controller -> com/hxl/controller
+        String packagePath = defaultPackage.replace(".", "/");
+        // 根据类加载器 获取系统绝对路径
+        String absolutePath = Thread.currentThread()
+                .getContextClassLoader()
+                .getResource(packagePath)
+                .getPath();
+        // 对经过 URL 编码的 absolutePath 字符串进行解码，使用系统默认的字符集（Charset.defaultCharset()）
+        // absolutePath = URLDecoder.decode(absolutePath, Charset.defaultCharset());
+        // 创建文件系统
+        File file = new File(absolutePath);
+        // 获取里面的所有文件
+        File[] files = file.listFiles();
+        for (File f : files) {
+            // 对所有以 .class 结尾的文件进行分析
+            String fileName = f.getName();
+            if (fileName.endsWith(Const.SUFFIX_CLASS)) {
+                // 提取类名
+                String simpleClassName = fileName.substring(0, fileName.lastIndexOf("."));
+                // 根据包名(com.hxl.controller) + 类名(UserController) => com.hxl.controller.UserController
+                String fullyQualifiedName = defaultPackage + simpleClassName;
+                // 根据全限定名获取该类的Class对象
+                Class<?> clazz = Class.forName(fullyQualifiedName);
+                // 判断该类上是否实现了 HandlerAdapter接口
+                if (HandlerAdapter.class.isAssignableFrom(clazz)) {
+                    // 实例化对象
+                    Object instance = clazz.getConstructor().newInstance();
+                    // 将对象存入集合里
+                    handlerAdapters.add((HandlerAdapter) instance);
+                }
+            }
+        }
+        // 将Bean集合放入beanMap里
+        beanMap.put(Const.HANDLER_ADAPTER, handlerAdapters);
     }
 
     private void createHandlerMapping(String defaultPackage) throws Exception {
-        // 类路径包名 转换成 类路径
+        // 存储处理器映射器的集合
+        List<HandlerMapping> handlerMappings = new ArrayList<>();
+
+        // 将包名 com.hxl.controller -> com/hxl/controller
         String relativePath = defaultPackage.replace(".", "/");
         // 利用类加载器，获取系统绝对路径
         String absolutePath = Thread.currentThread()
                 .getContextClassLoader()
                 .getResource(relativePath)
                 .getPath();
-        // 对经过 URL 编码的 absolutePath 字符串进行解码，使用系统默认的字符集（Charset.defaultCharset()），避免乱码
-        absolutePath = URLDecoder.decode(absolutePath, Charset.defaultCharset());
+        // 对经过 URL 编码的 absolutePath 字符串进行解码，使用系统默认的字符集（Charset.defaultCharset()）
+        // absolutePath = URLDecoder.decode(absolutePath, Charset.defaultCharset());
         // 利用文件流，读取系统路径下的class文件
         File file = new File(absolutePath);
         // 获取路径下所有文件
@@ -81,7 +122,7 @@ public class ApplicationContext {
             // 是以.class结尾的class文件
             String fileName = f.getName();
             // 是class文件
-            if (fileName.startsWith(Const.SUFFIX_CLASS)) {
+            if (fileName.endsWith(Const.SUFFIX_CLASS)) {
                 // 截取类名
                 String simpleName = fileName.substring(0, fileName.lastIndexOf("."));
                 // 获取全限定名 com.hxl...HandlerMapping
@@ -92,12 +133,13 @@ public class ApplicationContext {
                 if (HandlerMapping.class.isAssignableFrom(clazz)) {
                     // 利用反射 获取实例对象
                     Object instance = Class.forName(fullyQualifiedName).getConstructor().newInstance();
-                    // 存入beanMap里
-                    beanMap.put(Const.HANDLER_MAPPING, instance);
-                    return; // 这里假设只有一个
+                    // 存入集合里
+                    handlerMappings.add((HandlerMapping) instance);
                 }
             }
         }
+        // 存入beanMap里
+        beanMap.put(Const.HANDLER_MAPPING, handlerMappings);
     }
 
     private void createInterceptors(Element interceptorsElement) throws Exception {
@@ -170,7 +212,7 @@ public class ApplicationContext {
         // 组件包对应的绝对路径
         String absolutePath =
                 Thread.currentThread().getContextClassLoader().getResource(basePath).getPath();
-        absolutePath = URLDecoder.decode(absolutePath, Charset.defaultCharset());
+        // absolutePath = URLDecoder.decode(absolutePath, Charset.defaultCharset());
 
         // 封装为File对象
         File file = new File(absolutePath);
