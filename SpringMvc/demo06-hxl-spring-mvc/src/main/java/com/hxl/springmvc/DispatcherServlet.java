@@ -90,7 +90,20 @@ public class DispatcherServlet extends HttpServlet {
             // 1.获取处理器执行链：HandlerMapping 根据 请求路径和请求方式 来匹配对应的 HandlerMethod以及拦截器等
             HandlerExecutionChain mappingHandler = handlerMapping.getHandler(request);
 
-            // 2.获取处理器适配器：
+            // 2.获取处理器适配器 (源码是有多个，这里只模拟一个)
+            HandlerAdapter ha = this.handlerAdapter;
+
+            // 3.执行preHandler
+            if (mappingHandler.appPreHandler(request, response)) {
+                return;
+            }
+            // 4.执行Handler方法
+
+            // 5.执行postHandler
+
+            // 6.视图渲染
+
+            // 7.执行afterComplation
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
