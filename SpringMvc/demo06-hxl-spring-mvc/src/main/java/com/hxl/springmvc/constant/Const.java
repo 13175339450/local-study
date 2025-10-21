@@ -1,7 +1,5 @@
 package com.hxl.springmvc.constant;
 
-import org.jaxen.expr.Step;
-
 public class Const {
 
     /**
@@ -61,7 +59,12 @@ public class Const {
     public static final String INTERCEPTORS = "interceptors";
 
     /**
-     *
+     * 处理器映射器集合的beanName
      */
     public static final String HANDLER_MAPPING = "handlerMapping";
+
+    /**
+     * 处理器适配器集合的beanName
+     */
+    public static final String HANDLER_ADAPTER = "handlerAdapter";
 }
