@@ -11,6 +11,11 @@ import java.util.Map;
 public interface View {
 
     /**
+     * 获取内容类型
+     */
+    String getContentType();
+
+    /**
      * 渲染方法
      */
     void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
