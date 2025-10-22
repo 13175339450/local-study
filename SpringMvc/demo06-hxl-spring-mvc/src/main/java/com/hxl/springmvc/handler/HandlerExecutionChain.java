@@ -5,8 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.assertj.core.util.Objects;
-
 import java.util.List;
 
 /**
@@ -47,8 +45,12 @@ public class HandlerExecutionChain {
             boolean result = interceptor.preHandle(request, response, handler);
             // 判断是否继续执行下一个拦截器
             if (!result) {
+                // 直接执行afterCompletion方法
+                triggerAfterCompletion(request, response, null);
                 return false;
             }
+            // afterCompletion的开始下标！！！
+            interceptorIndex = i;
         }
         return true;
     }
@@ -62,5 +64,17 @@ public class HandlerExecutionChain {
             // 执行方法
             interceptor.postHandle(request, response, handler, mv);
         }
+    }
+
+    public void triggerAfterCompletion(HttpServletRequest request, HttpServletResponse response, Exception ex)
+            throws Exception {
+        // 遍历拦截器 逆序遍历
+        for (int i = interceptorIndex; i >= 0; i--) {
+            // 获取每一个拦截器
+            HandlerInterceptor interceptor = interceptors.get(i);
+            // 执行方法
+            interceptor.afterCompletion(request, response, handler, ex);
+        }
+
     }
 }

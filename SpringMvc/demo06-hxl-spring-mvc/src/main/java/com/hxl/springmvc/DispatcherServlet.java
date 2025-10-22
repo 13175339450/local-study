@@ -114,6 +114,7 @@ public class DispatcherServlet extends HttpServlet {
             view.render(mv.getModel(), request, response);
 
             // 7.执行afterComplation
+            mappingHandler.triggerAfterCompletion(request, response, null);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
