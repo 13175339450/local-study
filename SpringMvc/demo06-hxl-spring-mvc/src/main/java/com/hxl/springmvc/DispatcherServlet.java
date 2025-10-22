@@ -7,6 +7,7 @@ import com.hxl.springmvc.handler.HandlerExecutionChain;
 import com.hxl.springmvc.handler.adapter.HandlerAdapter;
 import com.hxl.springmvc.handler.mapping.HandlerMapping;
 import com.hxl.springmvc.view.ModelAndView;
+import com.hxl.springmvc.view.View;
 import com.hxl.springmvc.view.ViewResolver;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * 前端控制器
@@ -105,9 +107,14 @@ public class DispatcherServlet extends HttpServlet {
             // 5.执行postHandler
             mappingHandler.applyPostHandler(request, response, mv);
 
-            // 6.视图渲染
+            // 6.响应
+            // 通过试图解析器进行解析，返回View对象
+            View view = viewResolver.resolveViewName(mv.getView().toString(), Locale.CANADA);
+            // 渲染 (传入Model数据)
+            view.render(mv.getModel(), request, response);
 
             // 7.执行afterComplation
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
