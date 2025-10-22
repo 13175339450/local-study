@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 @AllArgsConstructor
 public class HandlerMethod {
 
-    // 真正的处理器对象
+    // 真正的处理器对象 Controller对象
     private Object handler;
 
     // 处理器方法
