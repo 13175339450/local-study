@@ -1,5 +1,6 @@
 package com.hxl.springmvc.handler;
 
+import com.hxl.springmvc.view.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
@@ -36,7 +37,8 @@ public class HandlerExecutionChain {
     /**
      * 执行preHandler方法
      */
-    public boolean appPreHandler(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public boolean appPreHandler(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         // 遍历拦截器 顺序执行
         for (int i = 0; i < interceptors.size(); i++) {
             // 取出拦截器
@@ -49,5 +51,16 @@ public class HandlerExecutionChain {
             }
         }
         return true;
+    }
+
+    public void applyPostHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mv)
+            throws Exception {
+        // 遍历拦截器 逆序遍历
+        for (int i = interceptors.size() - 1; i >= 0; i--) {
+            // 取出拦截器
+            HandlerInterceptor interceptor = interceptors.get(i);
+            // 执行方法
+            interceptor.postHandle(request, response, handler, mv);
+        }
     }
 }

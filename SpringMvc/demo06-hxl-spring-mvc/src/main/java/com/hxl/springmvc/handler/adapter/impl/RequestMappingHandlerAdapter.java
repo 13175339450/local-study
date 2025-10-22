@@ -1,6 +1,5 @@
 package com.hxl.springmvc.handler.adapter.impl;
 
-import com.hxl.springmvc.handler.HandlerMethod;
 import com.hxl.springmvc.handler.adapter.HandlerAdapter;
 import com.hxl.springmvc.view.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;

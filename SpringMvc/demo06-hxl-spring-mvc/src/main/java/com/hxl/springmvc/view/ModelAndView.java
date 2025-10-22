@@ -15,4 +15,8 @@ public class ModelAndView {
     private Object view;
 
     private ModelMap modelMap;
+
+    public void setViewName(String viewName) {
+        setView(viewName);
+    }
 }
