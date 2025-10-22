@@ -18,6 +18,5 @@ public interface View {
     /**
      * 渲染方法
      */
-    void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
-            throws Exception;
+    void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
 }
