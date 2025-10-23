@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+
+    <!-- 1. 扫描注解：自动发现和注册Bean -->
+    <component-scan base-package="com.spring.mvc.again.controller"/>
+
+    <!-- 2. 配置视图解析器 JSP-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- 3. 配置一个简单的UserController Bean -->
+    <bean id="userController" class="com.hxl.controller.UserController"/>
+
+    <!-- 4. 配置拦截器 -->
+    <interceptors>
+        <!-- 第一个拦截器：啥都不设置 -->
+        <bean class="com.hxl.interceptor.InterceptorOne"/>
+
+        <!-- 第二个拦截器：设置日志级别、忽略路径 -->
+        <bean class="com.hxl.interceptor.InterceptorTwo">
+            <property name="logLevel" value="DEBUG"/> <!-- 日志输出级别 -->
+            <property name="ignorePaths" value="/static/**,/public/**"/> <!-- 忽略拦截的路径 -->
+            <property name="timeout" value="3000"/> <!-- 超时时间（毫秒） -->
+        </bean>
+
+        <!-- 第三个用户拦截器：设置权限要求、排除路径 -->
+        <bean class="com.hxl.interceptor.UserInterceptor01">
+            <property name="authRequired" value="true"/> <!-- 是否需要用户认证 -->
+            <property name="excludeUrls" value="/user/login,/user/register"/> <!-- 不需要认证的URL -->
+            <property name="role" value="ADMIN"/> <!-- 允许访问的角色 -->
+        </bean>
+
+        <!-- 第四个用户拦截器：设置会话超时、缓存开关 -->
+        <bean class="com.hxl.interceptor.UserInterceptor02">
+            <property name="sessionTimeout" value="1800"/> <!-- 会话超时时间（秒） -->
+            <property name="cacheEnabled" value="false"/> <!-- 是否启用缓存 -->
+            <property name="description" value="处理用户会话与权限二次校验"/> <!-- 拦截器描述 -->
+        </bean>
+    </interceptors>
+
+</beans>

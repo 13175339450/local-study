@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee">
+
+    <!-- 配置Spring MVC的前端控制器 -->
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <!-- DispatcherServlet 对应的全限定名 -->
+        <servlet-class>com.spring.mvc.again.DispatcherServlet</servlet-class>
+
+        <!-- 初始化参数：指定Spring配置文件位置 -->
+        <init-param>
+            <!-- 参数名是官方定死的 -->
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:springmvc.xml</param-value>
+        </init-param>
+
+        <!-- 容器启动时立即加载此Servlet: 用户第一次请求时不加载，响应快 -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- 映射所有URL请求到 DispatcherServlet -->
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+</web-app>
