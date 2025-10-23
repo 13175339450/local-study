@@ -21,6 +21,11 @@ public class SpringConstant {
     public static final String VIEW_RESOLVER = "viewResolver";
 
     /**
+     * 拦截器的beanName
+     */
+    public static final String INTERCEPTORS = "interceptors";
+
+    /**
      * web.xml文件中配置 DispatcherServlet 的初始化参数 contextConfigLocation 的名字，框架写死的
      */
     public static final String CONTEXT_CONFIG_LOCATION = "contextConfigLocation";
@@ -59,4 +64,9 @@ public class SpringConstant {
      * springmvc.xml文件里 property 标签的 value 属性
      */
     public static final String PROPERTY_TAG_VALUE = "value";
+
+    /**
+     * springmvc.xml文件里拦截器的标签
+     */
+    public static final String BEAN_TAG_INTERCEPTOR = "interceptors";
 }

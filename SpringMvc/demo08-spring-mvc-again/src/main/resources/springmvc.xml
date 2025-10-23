@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+<beans>
 
     <!-- 1. 扫描注解：自动发现和注册Bean -->
-    <context:component-scan base-package="com.spring.mvc.again.controller"/>
+    <component-scan base-package="com.spring.mvc.again.controller"/>
 
     <!-- 2. 配置视图解析器 JSP-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -24,31 +14,30 @@
     <bean id="userController" class="com.hxl.controller.UserController"/>
 
     <!-- 4. 配置拦截器 -->
-    <mvc:interceptors>
+    <interceptors>
+        <!-- 第一个拦截器：啥都不设置 -->
+        <bean class="com.hxl.interceptor.InterceptorOne"/>
 
-        <!-- 拦截器1：全局拦截器，拦截所有请求 -->
-        <bean class="com.hxl.interceptor.GlobalInterceptor"/>
+        <!-- 第二个拦截器：设置日志级别、忽略路径 -->
+        <bean class="com.hxl.interceptor.InterceptorTwo">
+            <property name="logLevel" value="DEBUG"/> <!-- 日志输出级别 -->
+            <property name="ignorePaths" value="/static/**,/public/**"/> <!-- 忽略拦截的路径 -->
+            <property name="timeout" value="3000"/> <!-- 超时时间（毫秒） -->
+        </bean>
 
-        <!-- 拦截器2：针对特定路径的拦截器 -->
-        <mvc:interceptor>
-            <mvc:mapping path="/user/**"/>
-            <mvc:exclude-mapping path="/user/login"/>
-            <mvc:exclude-mapping path="/user/register"/>
-            <bean class="com.hxl.interceptor.AuthInterceptor"/>
-        </mvc:interceptor>
+        <!-- 第三个用户拦截器：设置权限要求、排除路径 -->
+        <bean class="com.hxl.interceptor.UserInterceptor01">
+            <property name="authRequired" value="true"/> <!-- 是否需要用户认证 -->
+            <property name="excludeUrls" value="/user/login,/user/register"/> <!-- 不需要认证的URL -->
+            <property name="role" value="ADMIN"/> <!-- 允许访问的角色 -->
+        </bean>
 
-        <!-- 拦截器3：日志拦截器 -->
-        <mvc:interceptor>
-            <mvc:mapping path="/**"/>
-            <bean class="com.hxl.interceptor.LoggingInterceptor"/>
-        </mvc:interceptor>
-
-        <!-- 拦截器4：管理员路径拦截 -->
-        <mvc:interceptor>
-            <mvc:mapping path="/admin/**"/>
-            <bean class="com.hxl.interceptor.AdminInterceptor"/>
-        </mvc:interceptor>
-
-    </mvc:interceptors>
+        <!-- 第四个用户拦截器：设置会话超时、缓存开关 -->
+        <bean class="com.hxl.interceptor.UserInterceptor02">
+            <property name="sessionTimeout" value="1800"/> <!-- 会话超时时间（秒） -->
+            <property name="cacheEnabled" value="false"/> <!-- 是否启用缓存 -->
+            <property name="description" value="处理用户会话与权限二次校验"/> <!-- 拦截器描述 -->
+        </bean>
+    </interceptors>
 
 </beans>

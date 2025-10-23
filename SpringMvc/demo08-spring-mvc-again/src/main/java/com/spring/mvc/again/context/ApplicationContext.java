@@ -2,6 +2,7 @@ package com.spring.mvc.again.context;
 
 import com.spring.mvc.again.annotation.Controller;
 import com.spring.mvc.again.constant.SpringConstant;
+import com.spring.mvc.again.interceptor.HandlerInterceptor;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -10,6 +11,7 @@ import javax.swing.*;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,7 +48,7 @@ public class ApplicationContext {
 
             // 创建拦截器
             Element interceptorsElement = (Element) document.selectSingleNode("/beans/interceptors");
-
+            createInterceptors(interceptorsElement);
 
             // 创建org.springmvc.web.servlet.mvc.method.annotation下的所有的HandlerMapping
 
@@ -57,6 +59,46 @@ public class ApplicationContext {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void createInterceptors(Element interceptorsElement) throws Exception {
+        // 存放拦截器的集合
+        List<HandlerInterceptor> interceptors = new ArrayList<>(128);
+
+        // 获取所有拦截器元素
+        List<Element> elements = interceptorsElement.elements(SpringConstant.BEAN_TAG_INTERCEPTOR);
+        // 遍历 为每个拦截器实例化
+        for (Element element : elements) {
+            // 获取每个拦截器的全限定名
+            String fullyQualityName = element.attributeValue(SpringConstant.BEAN_TAG_CLASS);
+            // 利用反射获取Class对象
+            Class<?> clazz = Class.forName(fullyQualityName);
+
+            // 获取每个 property 元素
+            List<Element> elementList = element.elements(SpringConstant.BEAN_TAG_PROPERTY);
+
+            // 实例化对象
+            Object instance = clazz.getConstructor().newInstance();
+
+            // 遍历 property 给实例的各个属性赋值
+            for (Element e : elementList) {
+                // 获取 name、value 属性以及参数类型
+                String fieldName = e.attributeValue(SpringConstant.PROPERTY_TAG_NAME);
+                String fieldValue = e.attributeValue(SpringConstant.PROPERTY_TAG_VALUE);
+                Class<?> fieldType = clazz.getDeclaredField(fieldName).getType(); // 利用反射通过字段名获取字段类型
+
+                // 拼接 Set 方法名
+                String setMethodName = getSetMethod(fieldName);
+                // 获取 Set 方法 根据方法名和形参类型
+                Method method = clazz.getDeclaredMethod(setMethodName, fieldType);
+
+                // 调用方法
+                method.invoke(instance, fieldValue);
+            }
+            interceptors.add((HandlerInterceptor) instance);
+        }
+        // 将拦截器放入beanMap里
+        beanMap.put(SpringConstant.INTERCEPTORS, interceptors);
     }
 
     /**
