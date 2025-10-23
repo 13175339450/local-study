@@ -8,6 +8,9 @@ import org.dom4j.io.SAXReader;
 
 import javax.swing.*;
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,7 +40,18 @@ public class ApplicationContext {
             Element componentScanElement = (Element) document.selectSingleNode("/beans/component-scan");
             componentScan(componentScanElement);
 
-            //
+            // 创建视图解析器 HandlerMapping
+            Element viewResolverElement = (Element) document.selectSingleNode("/beans/bean");
+            createViewResolver(viewResolverElement);
+
+            // 创建拦截器
+            Element interceptorsElement = (Element) document.selectSingleNode("/beans/interceptors");
+
+
+            // 创建org.springmvc.web.servlet.mvc.method.annotation下的所有的HandlerMapping
+
+
+            // 创建org.springmvc.web.servlet.mvc.method.annotation下的所有的HandlerAdapter
 
 
         } catch (Exception e) {
@@ -89,11 +103,54 @@ public class ApplicationContext {
                     // 放入beanMap里
                     beanMap.put(beanName, instance);
 
-                    /* TODO: 每一个 Controller 可能存在多个 HandlerMethod 方法
-                     *
-                     */
+                    // TODO: 每一个 Controller 可能存在多个 HandlerMethod 方法
                 }
             }
         }
+    }
+
+    /**
+     * 创建视图解析器
+     */
+    private void createViewResolver(Element viewResolverElement) throws Exception {
+        // org.springframework.web.servlet.view.InternalResourceViewResolver 这是Spring里的类
+        String viewResolverPath = viewResolverElement.attributeValue(SpringConstant.BEAN_TAG_CLASS);
+
+        // 获取Class对象
+        Class<?> clazz = Class.forName(viewResolverPath);
+        // 创建对象
+        Object instance = clazz.getConstructor().newInstance();
+
+        // 从xml里获取对象的所有属性，之后利用反射调用Set方法为其赋值
+        List<Element> properties = viewResolverElement.elements(SpringConstant.BEAN_TAG_PROPERTY); // 可能有多个试图解析器
+
+        // 遍历 并为所有属性赋值 需要组合Set方法名
+        for (Element property : properties) {
+            // 获取每个 property 标签的 name 和 value
+            String fieldName = property.attributeValue(SpringConstant.PROPERTY_TAG_NAME);
+            String fieldValue = property.attributeValue(SpringConstant.PROPERTY_TAG_VALUE);
+
+            // 组合获取 set 方法
+            String setMethodName = getSetMethod(fieldName);
+            // 根据 field 的数据类型 获取 Set 方法的形参类型
+            Field field = clazz.getDeclaredField(fieldName);
+            Class<?> fieldType = field.getType();
+
+            // 利用反射获取对应的方法
+            Method method = clazz.getDeclaredMethod(setMethodName, fieldType);
+            // 执行方法
+            method.invoke(instance, fieldValue);
+        }
+
+        beanMap.put(SpringConstant.VIEW_RESOLVER, instance);
+    }
+
+    /**
+     * 根据属性名获取 Set方法名
+     */
+    public String getSetMethod(String fieldName) {
+        return SpringConstant.PREFIX_SET_METHOD
+                + String.valueOf(fieldName.charAt(0)).toUpperCase()
+                + fieldName.substring(1);
     }
 }
