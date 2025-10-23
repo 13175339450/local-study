@@ -1,0 +1,6 @@
+一: Servlet生命周期
+Servlet运行在Servlet容器（Web服务器）里，其生命周期由容器来管理，分为四个阶段:
+  1. 加载和实例化: 默认情况下，当Servlet第一次被访问时，由容器创建Servlet对象 (也可以自定义在容器启动时)
+  2. 初始化: 在Servlet实例化之后，容器将调用Servlet的 init() 方法初始化这个对象，完成一些如加载配置文件、创建连接等初始化工作。该方法只调用一次
+  3. 请求处理: 每次请求Servlet时，Servlet容器都会调用Servlet的 service() 方法对请求进行处理。
+  4. 服务终止: 当需要释放内存或容器关闭时，容器就会调用Servlet的 destroy() 方法完成资源的释放。在destroy() 调用之后，容器会释放这个Servlet实例，该实例随后会被Java的GC回收
