@@ -1,6 +1,7 @@
 package com.hxl.config;
 
 import com.hxl.interceptor.LoginInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,9 +22,13 @@ import java.util.Properties;
  * SpringMVC配置类
  */
 @Configuration
-@ComponentScan("com.hxl.controller")
+// 扫描到拦截器所在的包，并注入IoC容器
+@ComponentScan({"com.hxl.controller", "com.hxl.interceptor"})
 @EnableWebMvc //开启注解驱动
 public class SpringMvcConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private LoginInterceptor loginInterceptor;
 
     @Bean
     public ThymeleafViewResolver getViewResolver(SpringTemplateEngine springTemplateEngine) {
@@ -94,7 +99,8 @@ public class SpringMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginInterceptor())
+        // 依赖注入拦截器
+        registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/test");
     }
