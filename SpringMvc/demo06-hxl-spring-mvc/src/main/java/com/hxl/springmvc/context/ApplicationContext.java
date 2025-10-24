@@ -260,6 +260,7 @@ public class ApplicationContext {
                         HandlerMethod handlerMethod = new HandlerMethod();
                         handlerMethod.setHandler(instance); // ControllerBean
                         handlerMethod.setMethod(method); // 处理器方法
+                        map.put(mappingInfo, handlerMethod);
                     }
 
                 }

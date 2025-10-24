@@ -90,8 +90,6 @@ public class DispatcherServlet extends HttpServlet {
     private void doDispatch(HttpServletRequest request, HttpServletResponse response) {
         HandlerExecutionChain mappingHandler = null;
         try {
-            //
-
             // 获取合适的 HandlerMapping,并获取处理器执行链
             mappingHandler = getHandler(request);
         } catch (Exception ex) {
@@ -107,7 +105,7 @@ public class DispatcherServlet extends HttpServlet {
         // 遍历拦截器集合
         if (this.handlerMappings != null) {
             for (HandlerMapping mapping : this.handlerMappings) {
-                // 利用每一个 HandlerMapping 的实现类，尝试获取适配此次请求的 处理器执行链
+                // TODO: 利用每一个 HandlerMapping 的实现类，尝试获取适配此次请求的 处理器执行链
                 HandlerExecutionChain handler = mapping.getHandler(request);
                 // 获取到合适的
                 if (handler != null) {

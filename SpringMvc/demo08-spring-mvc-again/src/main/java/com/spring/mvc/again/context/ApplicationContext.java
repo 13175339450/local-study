@@ -1,7 +1,11 @@
 package com.spring.mvc.again.context;
 
 import com.spring.mvc.again.annotation.Controller;
+import com.spring.mvc.again.annotation.RequestMapping;
 import com.spring.mvc.again.constant.SpringConstant;
+import com.spring.mvc.again.enums.RequestEnum;
+import com.spring.mvc.again.handler.HandlerMethod;
+import com.spring.mvc.again.handler.RequestMappingInfo;
 import com.spring.mvc.again.handler.adapter.HandlerAdapter;
 import com.spring.mvc.again.handler.mapper.HandlerMapping;
 import com.spring.mvc.again.interceptor.HandlerInterceptor;
@@ -14,6 +18,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,7 +56,9 @@ public class ApplicationContext {
 
             // 组件扫描 并注入IoC容器
             Element componentScanElement = (Element) document.selectSingleNode("/beans/component-scan");
-            componentScan(componentScanElement);
+            // TODO: 组件注册，并返回 HandlerMethodMap
+            Map<RequestMappingInfo, HandlerMethod> handlerMethodMap =
+                    componentScan(componentScanElement);
 
             // 创建视图解析器 HandlerMapping
             Element viewResolverElement = (Element) document.selectSingleNode("/beans/bean");
@@ -77,8 +84,11 @@ public class ApplicationContext {
      *   componentScanElement主要存储springmvc.xml文件里 Controller 类所在包的路径！
      *   所以需要做的是，获取该路径下的所有标注了 @Controller 注解的类，并将其注入IoC
      */
-    private void componentScan(Element componentScanElement)
+    private Map<RequestMappingInfo, HandlerMethod> componentScan(Element componentScanElement)
             throws Exception {
+        // 存储HandlerMethod 的集合
+        Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = new HashMap<>(128);
+
         // 获取要扫描的包的类路径 : com.spring.mvc.again.controller
         String classPath = componentScanElement.attributeValue(SpringConstant.BASE_PACKAGE);
         // 转换成文件路径
@@ -116,10 +126,31 @@ public class ApplicationContext {
                     // 放入beanMap里
                     beanMap.put(beanName, instance);
 
-                    // TODO: 每一个 Controller 可能存在多个 HandlerMethod 方法
+                    /**TODO: 每一个 Controller 可能存在多个 HandlerMethod 方法
+                     *  每个 HandlerMethod 都有唯一的 URL & METHOD 组合 => RequestMappingInfo
+                     */
+                    // 获取所有的带 @RequestMapping 注解的方法
+                    Method[] methods = clazz.getDeclaredMethods();
+                    for (Method m : methods) {
+                        // 判断是否有 @RequestMapping注解
+                        if (m.isAnnotationPresent(RequestMapping.class)) {
+                            // 获取注解上的 URI 和 METHOD
+                            RequestMapping annotation = m.getAnnotation(RequestMapping.class);
+                            String[] uri = annotation.value();
+                            RequestEnum method = annotation.method();
+
+                            // 组合 RequestMappingInfo 对象 获取第一条路径即可
+                            RequestMappingInfo requestMappingInfo =
+                                    new RequestMappingInfo(uri[0], method.toString());
+                            // 组合 HandlerMethod
+                            HandlerMethod handlerMethod = new HandlerMethod(instance, m);
+                            handlerMethodMap.put(requestMappingInfo, handlerMethod);
+                        }
+                    }
                 }
             }
         }
+        return handlerMethodMap;
     }
 
     /**
