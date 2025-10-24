@@ -22,4 +22,9 @@ public interface HandlerInterceptor {
             throws Exception {
 
     }
+
+    /**
+     * 暂不设计实现类
+     */
+    boolean matches(HttpServletRequest request);
 }

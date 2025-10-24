@@ -2,6 +2,8 @@ package com.spring.mvc.again.context;
 
 import com.spring.mvc.again.annotation.Controller;
 import com.spring.mvc.again.constant.SpringConstant;
+import com.spring.mvc.again.handler.adapter.HandlerAdapter;
+import com.spring.mvc.again.handler.mapper.HandlerMapping;
 import com.spring.mvc.again.interceptor.HandlerInterceptor;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -25,6 +27,15 @@ public class ApplicationContext {
     private Map<String, Object> beanMap = new ConcurrentHashMap<>(128);
 
     /**
+     * 根据 beanName 获取 Bean
+     *
+     * @param beanName Bean的名字
+     */
+    public Object getBean(String beanName) {
+        return beanMap.get(beanName);
+    }
+
+    /**
      * TODO: 根据springmvc.xml配置，解析里面的组件并注册（初始化）
      *
      * @param springPath springmvc.xml配置文件的本地系统绝对路径
@@ -44,61 +55,21 @@ public class ApplicationContext {
 
             // 创建视图解析器 HandlerMapping
             Element viewResolverElement = (Element) document.selectSingleNode("/beans/bean");
-            createViewResolver(viewResolverElement);
+            registerViewResolver(viewResolverElement);
 
             // 创建拦截器
             Element interceptorsElement = (Element) document.selectSingleNode("/beans/interceptors");
-            createInterceptors(interceptorsElement);
+            registerInterceptors(interceptorsElement);
 
-            // 创建org.springmvc.web.servlet.mvc.method.annotation下的所有的HandlerMapping
+            // 创建com.spring.mvc.again.handler.mapper.impl下的所有的HandlerMapping
+            registerHandlerMappings(SpringConstant.HANDLER_MAPPING_PACKAGE);
 
-
-            // 创建org.springmvc.web.servlet.mvc.method.annotation下的所有的HandlerAdapter
-
+            // 创建com.spring.mvc.again.handler.adapter.impl下的所有的HandlerAdapter
+            registerHandlerAdapters(SpringConstant.HANDLER_ADAPTER_PACKAGE);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void createInterceptors(Element interceptorsElement) throws Exception {
-        // 存放拦截器的集合
-        List<HandlerInterceptor> interceptors = new ArrayList<>(128);
-
-        // 获取所有拦截器元素
-        List<Element> elements = interceptorsElement.elements(SpringConstant.BEAN_TAG_INTERCEPTOR);
-        // 遍历 为每个拦截器实例化
-        for (Element element : elements) {
-            // 获取每个拦截器的全限定名
-            String fullyQualityName = element.attributeValue(SpringConstant.BEAN_TAG_CLASS);
-            // 利用反射获取Class对象
-            Class<?> clazz = Class.forName(fullyQualityName);
-
-            // 获取每个 property 元素
-            List<Element> elementList = element.elements(SpringConstant.BEAN_TAG_PROPERTY);
-
-            // 实例化对象
-            Object instance = clazz.getConstructor().newInstance();
-
-            // 遍历 property 给实例的各个属性赋值
-            for (Element e : elementList) {
-                // 获取 name、value 属性以及参数类型
-                String fieldName = e.attributeValue(SpringConstant.PROPERTY_TAG_NAME);
-                String fieldValue = e.attributeValue(SpringConstant.PROPERTY_TAG_VALUE);
-                Class<?> fieldType = clazz.getDeclaredField(fieldName).getType(); // 利用反射通过字段名获取字段类型
-
-                // 拼接 Set 方法名
-                String setMethodName = getSetMethod(fieldName);
-                // 获取 Set 方法 根据方法名和形参类型
-                Method method = clazz.getDeclaredMethod(setMethodName, fieldType);
-
-                // 调用方法
-                method.invoke(instance, fieldValue);
-            }
-            interceptors.add((HandlerInterceptor) instance);
-        }
-        // 将拦截器放入beanMap里
-        beanMap.put(SpringConstant.INTERCEPTORS, interceptors);
     }
 
     /**
@@ -131,13 +102,13 @@ public class ApplicationContext {
                 // 获取简单类名
                 String simpleClassName = fileName.substring(0, fileName.lastIndexOf("."));
                 // 拼接获得类的 全限定名 com...UserController
-                String fullyQualityName = classPath + "." + simpleClassName;
+                String fullyQualifiedName = classPath + "." + simpleClassName;
 
                 // 利用反射获取Class对象
-                Class<?> clazz = Class.forName(fullyQualityName);
+                Class<?> clazz = Class.forName(fullyQualifiedName);
 
-                // 判断该类是否有 @Controller (假设都是普通类对象)
-                if (clazz.isAnnotationPresent(Controller.class)) {
+                // 判断该类是简单类，并且是否有 @Controller
+                if (isNormalClass(clazz) && clazz.isAnnotationPresent(Controller.class)) {
                     // 实例化对象
                     Object instance = clazz.getConstructor().newInstance();
                     // beanName默认是类名首字母小写
@@ -152,9 +123,9 @@ public class ApplicationContext {
     }
 
     /**
-     * 创建视图解析器
+     * 注册视图解析器
      */
-    private void createViewResolver(Element viewResolverElement) throws Exception {
+    private void registerViewResolver(Element viewResolverElement) throws Exception {
         // org.springframework.web.servlet.view.InternalResourceViewResolver 这是Spring里的类
         String viewResolverPath = viewResolverElement.attributeValue(SpringConstant.BEAN_TAG_CLASS);
 
@@ -188,11 +159,152 @@ public class ApplicationContext {
     }
 
     /**
+     * 注册拦截器
+     */
+    private void registerInterceptors(Element interceptorsElement) throws Exception {
+        // 存放拦截器的集合
+        List<HandlerInterceptor> interceptors = new ArrayList<>(128);
+
+        // 获取所有拦截器元素
+        List<Element> elements = interceptorsElement.elements(SpringConstant.BEAN_TAG_INTERCEPTOR);
+        // 遍历 为每个拦截器实例化
+        for (Element element : elements) {
+            // 获取每个拦截器的全限定名
+            String fullyQualifiedName = element.attributeValue(SpringConstant.BEAN_TAG_CLASS);
+            // 利用反射获取Class对象
+            Class<?> clazz = Class.forName(fullyQualifiedName);
+
+            // 获取每个 property 元素
+            List<Element> elementList = element.elements(SpringConstant.BEAN_TAG_PROPERTY);
+
+            // 实例化对象
+            Object instance = clazz.getConstructor().newInstance();
+
+            // 遍历 property 给实例的各个属性赋值
+            for (Element e : elementList) {
+                // 获取 name、value 属性以及参数类型
+                String fieldName = e.attributeValue(SpringConstant.PROPERTY_TAG_NAME);
+                String fieldValue = e.attributeValue(SpringConstant.PROPERTY_TAG_VALUE);
+                Class<?> fieldType = clazz.getDeclaredField(fieldName).getType(); // 利用反射通过字段名获取字段类型
+
+                // 拼接 Set 方法名
+                String setMethodName = getSetMethod(fieldName);
+                // 获取 Set 方法 根据方法名和形参类型
+                Method method = clazz.getDeclaredMethod(setMethodName, fieldType);
+
+                // 调用方法
+                method.invoke(instance, fieldValue);
+            }
+            interceptors.add((HandlerInterceptor) instance);
+        }
+        // 将拦截器放入beanMap里
+        beanMap.put(SpringConstant.INTERCEPTORS, interceptors);
+    }
+
+    /**
+     * 注册处理器映射器
+     *
+     * @param handlerMappingPackage 实现类所在的包
+     */
+    private void registerHandlerMappings(String handlerMappingPackage) throws Exception {
+        // 存放处理器映射器的集合
+        ArrayList<HandlerMapping> mappings = new ArrayList<>();
+
+        // 将 com.spring.mvc.again.handler.mapper.impl => com/spring/mvc/again/handler/mapper/impl
+        String relativePath = handlerMappingPackage.replace(".", "/");
+        // 获取系统本地路径
+        String absolutePath = Thread.currentThread()
+                .getContextClassLoader()
+                .getResource(relativePath)
+                .getPath();
+        // 利用文件系统获取该路径下所有文件
+        File[] files = new File(absolutePath).listFiles();
+
+        // 遍历文件 只注册为 普通类 的class文件
+        for (File file : files) {
+            String fileName = file.getName();
+            // 判断是否是以.class结尾
+            if (fileName.endsWith(SpringConstant.SUFFIX_CLASS)) {
+                // 截取得简单类名
+                String simpleClassName = fileName.substring(0, fileName.lastIndexOf("."));
+                // 拼接得 全限定名
+                String fullyQualifiedName = handlerMappingPackage + "." + simpleClassName;
+                // 获取Class对象
+                Class<?> clazz = Class.forName(fullyQualifiedName);
+                // 判断该类是否是普通类，并且实现了 HandlerMapping 接口
+                if (isNormalClass(clazz) && HandlerMapping.class.isAssignableFrom(clazz)) {
+                    // 实例化对象
+                    Object instance = clazz.getConstructor().newInstance();
+                    // 放入集合里
+                    mappings.add((HandlerMapping) instance);
+                }
+            }
+        }
+        // 将处理器映射器集合放入beanMap里
+        beanMap.put(SpringConstant.HANDLER_MAPPINGS, mappings);
+    }
+
+
+    /**
+     * 注册拦截器适配器
+     *
+     * @param handlerAdapterPackage 实现类所在的包
+     */
+    private void registerHandlerAdapters(String handlerAdapterPackage) throws Exception {
+        // 创建存储 HandlerAdapter 的集合
+        ArrayList<HandlerAdapter> adapters = new ArrayList<>();
+
+        // 路径转换
+        String relativePath = handlerAdapterPackage.replace(".", "/");
+        // 获取系统绝对路径
+        String absolutePath = Thread.currentThread()
+                .getContextClassLoader()
+                .getResource(relativePath)
+                .getPath();
+        // 利用文件系统获取所有文件
+        File[] files = new File(absolutePath).listFiles();
+        for (File file : files) {
+            String fileName = file.getName();
+
+            // 判断是否是 class 文件
+            if (fileName.endsWith(SpringConstant.SUFFIX_CLASS)) {
+                // 获取简单类名
+                String simpleClassName = fileName.substring(0, fileName.lastIndexOf("."));
+                // 获取全限定名
+                String fullyQualifiedName = handlerAdapterPackage + "." + simpleClassName;
+                // 获取Class对象
+                Class<?> clazz = Class.forName(fullyQualifiedName);
+                // 判断是否是简单类，并且实现了 HandlerAdapter 接口
+                if (isNormalClass(clazz) && HandlerAdapter.class.isAssignableFrom(clazz)) {
+                    // 实例化对象
+                    Object instance = clazz.getConstructor().newInstance();
+                    // 加入集合
+                    adapters.add((HandlerAdapter) instance);
+                }
+            }
+        }
+        // 加入beanMap
+        beanMap.put(SpringConstant.HANDLER_ADAPTER, adapters);
+    }
+
+    /**
      * 根据属性名获取 Set方法名
      */
     public String getSetMethod(String fieldName) {
         return SpringConstant.PREFIX_SET_METHOD
                 + String.valueOf(fieldName.charAt(0)).toUpperCase()
                 + fieldName.substring(1);
+    }
+
+    /**
+     * 判断是不是简单类对象
+     */
+    public static boolean isNormalClass(Class<?> clazz) {
+        return !clazz.isInterface() &&
+                !clazz.isAnnotation() &&
+                !clazz.isEnum() &&
+                !clazz.isArray() &&
+                !clazz.isPrimitive() &&
+                !clazz.isSynthetic();
     }
 }
