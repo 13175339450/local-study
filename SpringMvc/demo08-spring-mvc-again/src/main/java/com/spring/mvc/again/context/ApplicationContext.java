@@ -68,12 +68,14 @@ public class ApplicationContext {
             Element interceptorsElement = (Element) document.selectSingleNode("/beans/interceptors");
             registerInterceptors(interceptorsElement);
 
-            // 创建com.spring.mvc.again.handler.mapper.impl下的所有的HandlerMapping
-            registerHandlerMappings(SpringConstant.HANDLER_MAPPING_PACKAGE);
+            /** TODO:
+             *   创建com.spring.mvc.again.handler.mapper.impl下的所有的HandlerMapping
+             *   其中实现类为 RequestMappingHandlerMapping，里面有一个属性为 HandlerMethodMap，所以下面传入
+             */
+            registerHandlerMappings(SpringConstant.HANDLER_MAPPING_PACKAGE, handlerMethodMap);
 
             // 创建com.spring.mvc.again.handler.adapter.impl下的所有的HandlerAdapter
             registerHandlerAdapters(SpringConstant.HANDLER_ADAPTER_PACKAGE);
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -237,7 +239,9 @@ public class ApplicationContext {
      *
      * @param handlerMappingPackage 实现类所在的包
      */
-    private void registerHandlerMappings(String handlerMappingPackage) throws Exception {
+    private void registerHandlerMappings(String handlerMappingPackage,
+                                         Map<RequestMappingInfo, HandlerMethod> handlerMethodMap)
+            throws Exception {
         // 存放处理器映射器的集合
         ArrayList<HandlerMapping> mappings = new ArrayList<>();
 
@@ -264,8 +268,9 @@ public class ApplicationContext {
                 Class<?> clazz = Class.forName(fullyQualifiedName);
                 // 判断该类是否是普通类，并且实现了 HandlerMapping 接口
                 if (isNormalClass(clazz) && HandlerMapping.class.isAssignableFrom(clazz)) {
-                    // 实例化对象
-                    Object instance = clazz.getConstructor().newInstance();
+                    // 调用有参构造器，在实例化时也为属性 HandlerMethodMap 赋值
+                    Object instance = clazz.getConstructor(Map.class)
+                            .newInstance(handlerMethodMap);
                     // 放入集合里
                     mappings.add((HandlerMapping) instance);
                 }
