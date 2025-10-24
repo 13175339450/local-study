@@ -2,6 +2,7 @@ package com.spring.mvc.again.context;
 
 import com.spring.mvc.again.annotation.Controller;
 import com.spring.mvc.again.constant.SpringConstant;
+import com.spring.mvc.again.handler.adapter.HandlerAdapter;
 import com.spring.mvc.again.handler.mapper.HandlerMapping;
 import com.spring.mvc.again.handler.mapper.impl.RequestMappingHandlerMapping;
 import com.spring.mvc.again.interceptor.HandlerInterceptor;
@@ -236,7 +237,46 @@ public class ApplicationContext {
     }
 
 
-    private void registerHandlerAdapters(String handlerAdapterPackage) {
+    /**
+     * 注册拦截器适配器
+     *
+     * @param handlerAdapterPackage 实现类所在的包
+     */
+    private void registerHandlerAdapters(String handlerAdapterPackage) throws Exception {
+        // 创建存储 HandlerAdapter 的集合
+        ArrayList<HandlerAdapter> adapters = new ArrayList<>();
+
+        // 路径转换
+        String relativePath = handlerAdapterPackage.replace(".", "/");
+        // 获取系统绝对路径
+        String absolutePath = Thread.currentThread()
+                .getContextClassLoader()
+                .getResource(relativePath)
+                .getPath();
+        // 利用文件系统获取所有文件
+        File[] files = new File(absolutePath).listFiles();
+        for (File file : files) {
+            String fileName = file.getName();
+
+            // 判断是否是 class 文件
+            if (fileName.endsWith(SpringConstant.SUFFIX_CLASS)) {
+                // 获取简单类名
+                String simpleClassName = fileName.substring(0, fileName.lastIndexOf("."));
+                // 获取全限定名
+                String fullyQualifiedName = handlerAdapterPackage + "." + simpleClassName;
+                // 获取Class对象
+                Class<?> clazz = Class.forName(fullyQualifiedName);
+                // 判断是否是简单类，并且实现了 HandlerAdapter 接口
+                if (isNormalClass(clazz) && HandlerAdapter.class.isAssignableFrom(clazz)) {
+                    // 实例化对象
+                    Object instance = clazz.getConstructor().newInstance();
+                    // 加入集合
+                    adapters.add((HandlerAdapter) instance);
+                }
+            }
+        }
+        // 加入beanMap
+        beanMap.put(SpringConstant.HANDLER_ADAPTER, adapters);
     }
 
     /**
