@@ -2,12 +2,15 @@ package com.spring.mvc.again;
 
 import com.spring.mvc.again.constant.SpringConstant;
 import com.spring.mvc.again.context.WebApplicationContext;
+import com.spring.mvc.again.handler.HandlerExecutionChain;
 import com.spring.mvc.again.handler.adapter.HandlerAdapter;
 import com.spring.mvc.again.handler.mapper.HandlerMapping;
 import com.spring.mvc.again.view.ViewResolver;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import javax.swing.*;
 import java.util.List;
@@ -31,6 +34,9 @@ public class DispatcherServlet extends HttpServlet {
      * 处理器适配器集合
      */
     private List<HandlerAdapter> handlerAdapters;
+
+    public DispatcherServlet() {
+    }
 
     /**
      * TODO: 在容器启动时，会先调用 继承的父类的 init(ServletConfig) 初始化方法，因为我们没有重写该方法（HttpServlet类的）
@@ -78,7 +84,37 @@ public class DispatcherServlet extends HttpServlet {
         handlerAdapters = (List<HandlerAdapter>) webApplicationContext.getBean(SpringConstant.HANDLER_ADAPTER);
     }
 
-    public DispatcherServlet() {
+    /**
+     * 前端控制器最核心方法
+     */
+    private void doDispatch(HttpServletRequest request, HttpServletResponse response) {
+        HandlerExecutionChain mappingHandler = null;
+        try {
+            //
 
+            // 获取合适的 HandlerMapping,并获取处理器执行链
+            mappingHandler = getHandler(request);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
+    }
+
+    /**
+     * 获取合适的 HandlerMapping 并且返回对应的 处理器执行链
+     */
+    private HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
+        // 遍历拦截器集合
+        if (this.handlerMappings != null) {
+            for (HandlerMapping mapping : this.handlerMappings) {
+                // 利用每一个 HandlerMapping 的实现类，尝试获取适配此次请求的 处理器执行链
+                HandlerExecutionChain handler = mapping.getHandler(request);
+                // 获取到合适的
+                if (handler != null) {
+                    return handler;
+                }
+            }
+        }
+        return null;
     }
 }

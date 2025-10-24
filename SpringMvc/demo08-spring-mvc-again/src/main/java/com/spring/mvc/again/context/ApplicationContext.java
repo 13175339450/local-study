@@ -4,7 +4,6 @@ import com.spring.mvc.again.annotation.Controller;
 import com.spring.mvc.again.constant.SpringConstant;
 import com.spring.mvc.again.handler.adapter.HandlerAdapter;
 import com.spring.mvc.again.handler.mapper.HandlerMapping;
-import com.spring.mvc.again.handler.mapper.impl.RequestMappingHandlerMapping;
 import com.spring.mvc.again.interceptor.HandlerInterceptor;
 import org.dom4j.Document;
 import org.dom4j.Element;
