@@ -2,16 +2,35 @@ package com.spring.mvc.again;
 
 import com.spring.mvc.again.constant.SpringConstant;
 import com.spring.mvc.again.context.WebApplicationContext;
+import com.spring.mvc.again.handler.adapter.HandlerAdapter;
+import com.spring.mvc.again.handler.mapper.HandlerMapping;
+import com.spring.mvc.again.view.ViewResolver;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 
 import javax.swing.*;
+import java.util.List;
 
 /**
  * 前端控制器：TomCat会自动创建该对象，并且调用里面的init方法
  */
 public class DispatcherServlet extends HttpServlet {
+
+    /**
+     * 视图解析器
+     */
+    private ViewResolver viewResolver;
+
+    /**
+     * 处理器映射器集合
+     */
+    private List<HandlerMapping> handlerMappings;
+
+    /**
+     * 处理器适配器集合
+     */
+    private List<HandlerAdapter> handlerAdapters;
 
     /**
      * TODO: 在容器启动时，会先调用 继承的父类的 init(ServletConfig) 初始化方法，因为我们没有重写该方法（HttpServlet类的）
@@ -46,9 +65,17 @@ public class DispatcherServlet extends HttpServlet {
                     .getPath();
         }
 
-        // 创建 WebApplicationContext容器 并初始化Spring容器  ServletContext是所有Servlet共享的域
+        // 创建 WebApplicationContext容器 并初始化Spring容器 (ServletContext是所有Servlet共享的域)
         WebApplicationContext webApplicationContext =
                 new WebApplicationContext(springAbsolutePath, this.getServletContext());
+
+        // TODO: webApplicationContext 就是 SpringWeb 容器，将其存储到Servlet共享域里，方便后续使用
+        this.getServletContext().setAttribute(SpringConstant.WEB_APPLICATION_CONTEXT, webApplicationContext);
+
+        // TODO: 为 doDisPatch 核心方法里的一些重要的属性赋值
+        viewResolver = (ViewResolver) webApplicationContext.getBean(SpringConstant.VIEW_RESOLVER);
+        handlerMappings = (List<HandlerMapping>) webApplicationContext.getBean(SpringConstant.HANDLER_MAPPINGS);
+        handlerAdapters = (List<HandlerAdapter>) webApplicationContext.getBean(SpringConstant.HANDLER_ADAPTER);
     }
 
     public DispatcherServlet() {

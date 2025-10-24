@@ -28,6 +28,15 @@ public class ApplicationContext {
     private Map<String, Object> beanMap = new ConcurrentHashMap<>(128);
 
     /**
+     * 根据 beanName 获取 Bean
+     *
+     * @param beanName Bean的名字
+     */
+    public Object getBean(String beanName) {
+        return beanMap.get(beanName);
+    }
+
+    /**
      * TODO: 根据springmvc.xml配置，解析里面的组件并注册（初始化）
      *
      * @param springPath springmvc.xml配置文件的本地系统绝对路径

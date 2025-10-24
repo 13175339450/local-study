@@ -16,6 +16,11 @@ public class SpringConstant {
     public static final String PREFIX_GET_METHOD = "get";
 
     /**
+     * WebApplicationContext上下文
+     */
+    public static final String WEB_APPLICATION_CONTEXT = "webApplicationContext";
+
+    /**
      * 视图解析器的beanName
      */
     public static final String VIEW_RESOLVER = "viewResolver";

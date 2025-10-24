@@ -88,7 +88,7 @@ public class ApplicationContext {
                 // 提取类名
                 String simpleClassName = fileName.substring(0, fileName.lastIndexOf("."));
                 // 根据包名(com.hxl.controller) + 类名(UserController) => com.hxl.controller.UserController
-                String fullyQualifiedName = defaultPackage + simpleClassName;
+                String fullyQualifiedName = defaultPackage + "." + simpleClassName;
                 // 根据全限定名获取该类的Class对象
                 Class<?> clazz = Class.forName(fullyQualifiedName);
                 // 判断该类上是否实现了 HandlerAdapter接口
