@@ -26,6 +26,16 @@ public class SpringConstant {
     public static final String INTERCEPTORS = "interceptors";
 
     /**
+     * 处理器映射器的beanName
+     */
+    public static final String HANDLER_MAPPINGS = "handlerMappings";
+
+    /**
+     * 处理器适配器的beanName
+     */
+    public static final String HANDLER_ADAPTER = "handlerAdapters";
+
+    /**
      * web.xml文件中配置 DispatcherServlet 的初始化参数 contextConfigLocation 的名字，框架写死的
      */
     public static final String CONTEXT_CONFIG_LOCATION = "contextConfigLocation";
@@ -69,4 +79,14 @@ public class SpringConstant {
      * springmvc.xml文件里拦截器的标签
      */
     public static final String BEAN_TAG_INTERCEPTOR = "interceptors";
+
+    /**
+     * HandlerMapping实现类所在的包
+     */
+    public static final String HANDLER_MAPPING_PACKAGE = "com.spring.mvc.again.handler.mapper.impl";
+
+    /**
+     * HandlerAdapter实现类所在的包
+     */
+    public static final String HANDLER_ADAPTER_PACKAGE = "com.spring.mvc.again.handler.adapter.impl";
 }
