@@ -14,13 +14,15 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class UserAspect {
 
-    /** TODO: 如果切点表达式写成 * com.customize.service.*(..))
-     *    则表示 找com.hxl包下 名为service的类 的任意方法(*) 该方法参数随意
-     *    这显然是找不到到，所以就会失效
+    /**
+     * TODO: 如果切点表达式写成 * com.customize.service.*(..))
+     * 则表示 找com.hxl包下 名为service的类 的任意方法(*) 该方法参数随意
+     * 这显然是找不到到，所以就会失效
      */
     // @Pointcut("execution(* com.customize.service.UserService.*(..))")
     @Pointcut("execution(* com.customize.service.*.*(..))")
-    public void pointcut() {}
+    public void pointcut() {
+    }
 
     @Before("pointcut()")
     public void beforeAdvice() {

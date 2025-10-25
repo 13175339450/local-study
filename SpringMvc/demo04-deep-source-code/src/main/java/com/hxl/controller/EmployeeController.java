@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmployeeController {
 
     @RequestMapping("/1")
-    public String save(){
+    public String save() {
         return "save";
     }
 
     @RequestMapping("/2")
-    public void delete(Integer id){
+    public void delete(Integer id) {
 
     }
 }

@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 public class TransactionAop {
 
     @Pointcut("execution(* com.customize.service.*.*(..))")
-    public void pointCut(){}
+    public void pointCut() {
+    }
 
     @Around("pointCut()")
     public void transaction(ProceedingJoinPoint joinPoint) {

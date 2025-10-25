@@ -18,12 +18,12 @@ public interface HandlerInterceptor {
 
 
     default void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-                               ModelAndView modelAndView) throws Exception {
+                            ModelAndView modelAndView) throws Exception {
 
     }
 
     default void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-                                   Exception ex)
+                                 Exception ex)
             throws Exception {
 
     }

@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
-public abstract class AbstractHandlerMapping implements HandlerMapping{
+public abstract class AbstractHandlerMapping implements HandlerMapping {
 
 
     /**
