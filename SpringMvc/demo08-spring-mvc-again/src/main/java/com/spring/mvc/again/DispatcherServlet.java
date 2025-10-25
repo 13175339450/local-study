@@ -7,6 +7,7 @@ import com.spring.mvc.again.handler.HandlerMethod;
 import com.spring.mvc.again.handler.adapter.HandlerAdapter;
 import com.spring.mvc.again.handler.mapper.HandlerMapping;
 import com.spring.mvc.again.response.ModelAndView;
+import com.spring.mvc.again.view.View;
 import com.spring.mvc.again.view.ViewResolver;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 前端控制器：TomCat会自动创建该对象，并且调用里面的init方法
@@ -123,7 +125,11 @@ public class DispatcherServlet extends HttpServlet {
     private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,
                                        HandlerExecutionChain mappedHandler,
                                        ModelAndView mv, Exception ex) throws Exception {
+        // 通过试图解析器进行解析，返回View对象
+        View view = this.viewResolver.resolveViewName(mv.getView().toString(), Locale.CANADA);
 
+        // 渲染 （传入Model数据）
+        view.render(mv.getModel(), request, response);
     }
 
     /**

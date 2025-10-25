@@ -1,0 +1,41 @@
+package com.spring.mvc.again.view.impl;
+
+import com.spring.mvc.again.view.ModelMap;
+import com.spring.mvc.again.view.View;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Map;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class InternalResourceView implements View {
+    /**
+     * 响应内容类型
+     */
+    private String contentType;
+
+    /**
+     * 响应路径
+     */
+    private String path;
+
+    /**
+     * 渲染
+     */
+    @Override
+    public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 设置响应的内容类型
+        response.setContentType(contentType);
+
+        // 将model数据存储到request域当中（默认情况下，数据是存储在request域当中的）
+        model.forEach(request::setAttribute);
+
+        // 转发（默认情况下，跳转到视图是以转发的方式）
+        request.getRequestDispatcher(path).forward(request, response);
+    }
+}

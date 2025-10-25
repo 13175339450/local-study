@@ -60,7 +60,7 @@ public class ApplicationContext {
             Map<RequestMappingInfo, HandlerMethod> handlerMethodMap =
                     componentScan(componentScanElement);
 
-            // 创建视图解析器 HandlerMapping
+            // 创建视图解析器 ViewResolver
             Element viewResolverElement = (Element) document.selectSingleNode("/beans/bean");
             registerViewResolver(viewResolverElement);
 
@@ -159,7 +159,7 @@ public class ApplicationContext {
      * 注册视图解析器
      */
     private void registerViewResolver(Element viewResolverElement) throws Exception {
-        // org.springframework.web.servlet.view.InternalResourceViewResolver 这是Spring里的类
+        // com.spring.mvc.again.view.impl.InternalResourceViewResolver 路径配置的
         String viewResolverPath = viewResolverElement.attributeValue(SpringConstant.BEAN_TAG_CLASS);
 
         // 获取Class对象
