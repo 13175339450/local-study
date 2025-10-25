@@ -7,7 +7,10 @@ import com.hxl.domain.entity.Tank;
 public class WeaponFactory {
 
     // 无参构造私有化
-    private WeaponFactory(){};
+    private WeaponFactory() {
+    }
+
+    ;
 
     public static Weapon get(String type) {
         if ("flying".equals(type)) {

@@ -31,30 +31,30 @@ public class BeanConfig {
             File[] files = file.listFiles();
 
             Arrays.stream(files).forEach(f -> {
-                        // 分隔
-                        String[] split = f.getName().split("\\.");
-                        // 是class文件
-                        if ("class".equals(split[1])) {
-                            // 设置类的全限定名！！！注意拼接
-                            String className = path + "." + split[0];
-                            try {
-                                // 根据反射来判断该类是否有@Component注解
-                                Class<?> clazz = Class.forName(className);
+                // 分隔
+                String[] split = f.getName().split("\\.");
+                // 是class文件
+                if ("class".equals(split[1])) {
+                    // 设置类的全限定名！！！注意拼接
+                    String className = path + "." + split[0];
+                    try {
+                        // 根据反射来判断该类是否有@Component注解
+                        Class<?> clazz = Class.forName(className);
 
-                                // 判断类上是否存在@Component注解
-                                if (clazz.isAnnotationPresent(Component.class)) {
-                                    // 获取该注解
-                                    Component annotation = clazz.getAnnotation(Component.class);
-                                    String beanName = annotation.value();
+                        // 判断类上是否存在@Component注解
+                        if (clazz.isAnnotationPresent(Component.class)) {
+                            // 获取该注解
+                            Component annotation = clazz.getAnnotation(Component.class);
+                            String beanName = annotation.value();
 
-                                    // 放入Map缓存
-                                    beanMap.put(beanName, clazz.getConstructor().newInstance());
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            // 放入Map缓存
+                            beanMap.put(beanName, clazz.getConstructor().newInstance());
                         }
-                    });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
             beanMap.keySet().forEach(key -> {
                 System.out.println(key + " === " + beanMap.get(key));

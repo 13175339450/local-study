@@ -3,8 +3,11 @@ package com.spring.mvc.again;
 import com.spring.mvc.again.constant.SpringConstant;
 import com.spring.mvc.again.context.WebApplicationContext;
 import com.spring.mvc.again.handler.HandlerExecutionChain;
+import com.spring.mvc.again.handler.HandlerMethod;
 import com.spring.mvc.again.handler.adapter.HandlerAdapter;
 import com.spring.mvc.again.handler.mapper.HandlerMapping;
+import com.spring.mvc.again.response.ModelAndView;
+import com.spring.mvc.again.view.View;
 import com.spring.mvc.again.view.ViewResolver;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -14,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 前端控制器：TomCat会自动创建该对象，并且调用里面的init方法
@@ -88,14 +92,44 @@ public class DispatcherServlet extends HttpServlet {
      * 前端控制器最核心方法
      */
     private void doDispatch(HttpServletRequest request, HttpServletResponse response) {
-        HandlerExecutionChain mappingHandler = null;
+        HandlerExecutionChain mappedHandler = null;
         try {
-            // 获取合适的 HandlerMapping,并获取处理器执行链
-            mappingHandler = getHandler(request);
+            // TODO: 获取合适的 HandlerMapping,并获取处理器执行链
+            mappedHandler = getHandler(request);
+
+            // TODO: 从 List<HandlerAdapter> 中找到适配当前 HandlerMethod 的 HandlerAdapter！
+            HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
+
+            // TODO: 调用 preHandler 方法 => 从执行链里遍历需要执行的拦截器，并执行对应方法
+            if (mappedHandler.appPreHandler(request, response)) {
+                return;
+            }
+
+            // TODO: 真正执行 HandlerMethod 的方法，返回视图
+            ModelAndView mv = ha.handle(request, response, mappedHandler.getHandler());
+
+            // TODO: 调用 postHandler 方法 => 从执行链里遍历需要执行的拦截器，并执行对应方法
+            mappedHandler.appPostHandler(request, response, mv);
+
+            // TODO: 响应 (解析视图和渲染页面)
+            processDispatchResult(request, response, mappedHandler, mv, null);
+
+            // TODO: 执行 afterCompletion 收尾
+            triggerAfterCompletion(request, response, mappedHandler, null);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
 
+    }
+
+    private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,
+                                       HandlerExecutionChain mappedHandler,
+                                       ModelAndView mv, Exception ex) throws Exception {
+        // 通过试图解析器进行解析，返回View对象
+        View view = this.viewResolver.resolveViewName(mv.getView().toString(), Locale.CANADA);
+
+        // 渲染 （传入Model数据）
+        view.render(mv.getModel(), request, response);
     }
 
     /**
@@ -114,5 +148,34 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取适配 HandlerMethod 的 HandlerAdapter
+     */
+    private HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
+        // 从 List<HandlerAdapter> 中找到适配当前 HandlerMethod 的！
+        if (this.handlerAdapters != null) {
+            for (HandlerAdapter adapter : this.handlerAdapters) {
+                if (adapter.supports(handler)) {
+                    return adapter;
+                }
+            }
+        }
+        throw new ServletException("没有适配 " + handler + " 的处理器适配器");
+    }
+
+    /**
+     * 拦截器 afterCompletion 方法
+     */
+    private void triggerAfterCompletion(HttpServletRequest request, HttpServletResponse response,
+                                        HandlerExecutionChain mappedHandler, Exception ex)
+            throws Exception {
+
+        if (mappedHandler != null) {
+            // 调用 afterCompletion 方法
+            mappedHandler.triggerAfterCompletion(request, response, ex);
+        }
+        throw ex;
     }
 }

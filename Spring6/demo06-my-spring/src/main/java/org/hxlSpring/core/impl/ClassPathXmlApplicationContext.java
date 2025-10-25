@@ -129,26 +129,34 @@ public class ClassPathXmlApplicationContext implements ApplicationContext {
     public Object getBean(String beanName) {
         return beanMaps.get(beanName);
     }
-    
-    
+
+
     private Object convertParamType(String simpleTypeName, String stringValue) {
         // 该属性是简单属性
         switch (simpleTypeName) {
-            case "byte": case "Byte":
+            case "byte":
+            case "Byte":
                 return Byte.valueOf(stringValue);
-            case "short": case "Short":
+            case "short":
+            case "Short":
                 return Short.valueOf(stringValue);
-            case "int": case "Integer":
+            case "int":
+            case "Integer":
                 return Integer.valueOf(stringValue);
-            case "long": case "Long":
+            case "long":
+            case "Long":
                 return Long.valueOf(stringValue);
-            case "float": case "Float":
+            case "float":
+            case "Float":
                 return Float.valueOf(stringValue);
-            case "double": case "Double":
+            case "double":
+            case "Double":
                 return Double.valueOf(stringValue);
-            case "boolean": case "Boolean":
+            case "boolean":
+            case "Boolean":
                 return Boolean.valueOf(stringValue);
-            case "char": case "Character":
+            case "char":
+            case "Character":
                 return stringValue.charAt(0);
             case "String":
                 return stringValue;

@@ -60,7 +60,7 @@ public class ApplicationContext {
             Map<RequestMappingInfo, HandlerMethod> handlerMethodMap =
                     componentScan(componentScanElement);
 
-            // 创建视图解析器 HandlerMapping
+            // 创建视图解析器 ViewResolver
             Element viewResolverElement = (Element) document.selectSingleNode("/beans/bean");
             registerViewResolver(viewResolverElement);
 
@@ -69,7 +69,7 @@ public class ApplicationContext {
             registerInterceptors(interceptorsElement);
 
             /** TODO:
-             *   创建com.spring.mvc.again.handler.mapper.impl下的所有的HandlerMapping
+             *   创建com.spring.mvc.again.handler.mapper.impl下的所有的HandlerMapping (此处假设就一个)
              *   其中实现类为 RequestMappingHandlerMapping，里面有一个属性为 HandlerMethodMap，所以下面传入
              */
             registerHandlerMappings(SpringConstant.HANDLER_MAPPING_PACKAGE, handlerMethodMap);
@@ -159,7 +159,7 @@ public class ApplicationContext {
      * 注册视图解析器
      */
     private void registerViewResolver(Element viewResolverElement) throws Exception {
-        // org.springframework.web.servlet.view.InternalResourceViewResolver 这是Spring里的类
+        // com.spring.mvc.again.view.impl.InternalResourceViewResolver 路径配置的
         String viewResolverPath = viewResolverElement.attributeValue(SpringConstant.BEAN_TAG_CLASS);
 
         // 获取Class对象
