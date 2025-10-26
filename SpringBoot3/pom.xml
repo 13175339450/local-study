@@ -23,6 +23,7 @@
         <module>demo04-hxl-customize-starter-test</module>
         <module>demo05-boot-logging</module>
         <module>demo06-boot-spring-mvc</module>
+        <module>demo07-mvc-content-negotiation</module>
     </modules>
 
     <properties>
