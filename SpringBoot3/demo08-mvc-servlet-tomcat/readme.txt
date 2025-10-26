@@ -26,3 +26,11 @@ Web服务器的创建是通过WebServerFactory搞定的。容器中又会根据�
 :: 用法:
 - 修改 `server` 下的相关配置就可以修改服务器参数
 - 通过给容器中放一个 `ServletWebServerFactory`，来禁用掉SpringBoot默认放的服务器工厂，实现自定义嵌入任意服务器。
+
+
+2. @EnableWebMvc 禁用默认行为
+1. @EnableWebMvc 给容器中导入 `DelegatingWebMvcConfiguration` 组件，他是 `WebMvcConfigurationSupport`
+2. `WebMvcAutoConfiguration` 有一个核心的条件注解 `@ConditionalOnMissingBean(WebMvcConfigurationSupport.class)`，容器中没有 `WebMvcConfigurationSupport`，`WebMvcAutoConfiguration` 才生效.
+3. @EnableWebMvc 导入 `WebMvcConfigurationSupport` 导致 `WebMvcAutoConfiguration` 失效，导致禁用了默认行为
+- @EnableWebMVC 禁用了 Mvc的自动配置
+- `WebMvcConfigurer` 定义SpringMVC底层组件的功能类
