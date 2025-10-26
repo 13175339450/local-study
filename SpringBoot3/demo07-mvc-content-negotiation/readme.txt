@@ -32,8 +32,6 @@
         5 = AllEncompassingFormHttpMessageConverter
         6 = MappingJackson2HttpMessageConverter
         7 = MappingJackson2HttpMessageConverter
-        8 = MappingJackson2XmlHttpMessageConverter
-        9 = MappingJackson2XmlHttpMessageConverter
     c. TODO: 想要有其它消息转换器，比如Yaml的，需要导入对应的包！！！
     d. 最终因为要 json 所以 MappingJackson2HttpMessageConverter 支持写出json
     e. jackson用 ObjectMapper 把对象写出去
