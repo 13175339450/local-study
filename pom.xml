@@ -14,8 +14,6 @@
         <module>Spring6</module>
         <module>SpringBoot3</module>
         <module>SpringMvc</module>
-        <module>SpringMvc/demo09-all-annotation-dev</module>
-        <module>SpringMvc/demo10-ssm-annotation</module>
         <module>SpringCommon</module>
     </modules>
 
