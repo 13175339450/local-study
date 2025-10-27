@@ -22,7 +22,7 @@ public class MyBatisConfig {
     public MapperScannerConfigurer mapperScannerConfigurer() {
         MapperScannerConfigurer mapper = new MapperScannerConfigurer();
         // 设置Mapper的包路径
-        mapper.setBasePackage("com.hxl.ssm.mapper");
+        mapper.setBasePackage("com.hxl.ssm.ssm");
         return mapper;
     }
 }

@@ -88,7 +88,7 @@ public class SpringConstant {
     /**
      * HandlerMapping实现类所在的包
      */
-    public static final String HANDLER_MAPPING_PACKAGE = "com.spring.mvc.again.handler.mapper.impl";
+    public static final String HANDLER_MAPPING_PACKAGE = "com.spring.mvc.again.handler.ssm.impl";
 
     /**
      * HandlerAdapter实现类所在的包

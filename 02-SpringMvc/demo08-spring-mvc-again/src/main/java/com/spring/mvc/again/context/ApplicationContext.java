@@ -69,7 +69,7 @@ public class ApplicationContext {
             registerInterceptors(interceptorsElement);
 
             /** TODO:
-             *   创建com.spring.mvc.again.handler.mapper.impl下的所有的HandlerMapping (此处假设就一个)
+             *   创建com.spring.mvc.again.handler.ssm.impl下的所有的HandlerMapping (此处假设就一个)
              *   其中实现类为 RequestMappingHandlerMapping，里面有一个属性为 HandlerMethodMap，所以下面传入
              */
             registerHandlerMappings(SpringConstant.HANDLER_MAPPING_PACKAGE, handlerMethodMap);
@@ -245,7 +245,7 @@ public class ApplicationContext {
         // 存放处理器映射器的集合
         ArrayList<HandlerMapping> mappings = new ArrayList<>();
 
-        // 将 com.spring.mvc.again.handler.mapper.impl => com/spring/mvc/again/handler/mapper/impl
+        // 将 com.spring.mvc.again.handler.ssm.impl => com/spring/mvc/again/handler/ssm/impl
         String relativePath = handlerMappingPackage.replace(".", "/");
         // 获取系统本地路径
         String absolutePath = Thread.currentThread()
