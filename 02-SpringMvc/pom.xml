@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.hxl</groupId>
+        <artifactId>local-study</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>demo01-spring-mvc-base</module>
+        <module>demo02-mvc-http-entity</module>
+        <module>demo03-mvc-source-code</module>
+        <module>demo04-deep-source-code</module>
+        <module>demo05-spring-start-source-code</module>
+        <module>demo06-hxl-spring-mvc</module>
+        <module>demo07-init-spring-bean</module>
+        <module>demo08-spring-mvc-again</module>
+        <module>demo09-all-annotation-dev</module>
+        <module>demo10-ssm-annotation</module>
+    </modules>
+
+    <artifactId>02-SpringMvc</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>6.1.4</version>
+            </dependency>
+            <!--servlet依赖-->
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>6.0.0</version>
+            </dependency>
+            <!--logback日志依赖-->
+            <!--            <dependency>-->
+            <!--                <groupId>ch.qos.logback</groupId>-->
+            <!--                <artifactId>logback-classic</artifactId>-->
+            <!--                <version>1.5.3</version>-->
+            <!--            </dependency>-->
+            <!--thymeleaf和spring6的整合依赖-->
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf-spring6</artifactId>
+                <version>3.1.2.RELEASE</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+</project>
