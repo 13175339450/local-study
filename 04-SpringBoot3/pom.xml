@@ -26,6 +26,7 @@
         <module>demo07-mvc-content-negotiation</module>
         <module>demo08-mvc-servlet-tomcat</module>
         <module>demo09-spring-boot-ssm</module>
+        <module>demo10-boot-profile</module>
     </modules>
 
     <properties>
