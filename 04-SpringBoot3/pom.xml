@@ -28,6 +28,7 @@
         <module>demo09-spring-boot-ssm</module>
         <module>demo10-boot-profile</module>
         <module>demo11-spring-boot-test</module>
+        <module>demo12-spring-application-listener</module>
     </modules>
 
     <properties>
