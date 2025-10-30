@@ -3,12 +3,10 @@ package com.hxl.config;
 import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.time.Duration;
 
-@Configuration
 public class MyListenerConfig implements SpringApplicationRunListener {
 
     @Override
