@@ -12,3 +12,14 @@ TODO:
     3、运行
     以前步骤都正确执行，代表容器running。【调一次】
     ---总结: 程序启动 → 读配置 → 建容器 → 加载配置 → 创建对象 → 执行初始化 → 正常运行
+
+9种事件 触发顺序&时机
+  1. ApplicationStartingEvent：应用启动但未做任何事情,除过注册listeners and initializers.
+  2. ApplicationEnvironmentPreparedEvent： Environment 准备好，但context 未创建.
+  3. ApplicationContextInitializedEvent：ApplicationContext 准备好， ApplicationContextInitializers 调用，但是任何bean未加载
+  4. ApplicationPreparedEvent： 容器刷新之前，bean定义信息加载
+  5. ApplicationStartedEvent： 容器刷新完成，runner未调用
+  6. AvailabilityChangeEvent： LivenessState.CORRECT 应用存活
+  7. ApplicationReadyEvent：任何runner被调用
+  8. AvailabilityChangeEvent： ReadinessState.ACCEPTING_TRAFFIC 应用就绪，可以接请求
+  9. ApplicationFailedEvent：启动出错
