@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="WARN" monitorInterval="30">
+    <appenders>
+        <!-- 控制台输出 - 生产环境建议关闭或只输出WARN及以上 -->
+        <console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%-5p] %c{1.} - %m%n"/>
+        </console>
+
+        <!-- 应用日志文件 -->
+        <RollingFile name="AppFile"
+                     fileName="${sys:user.home}/logs/app.log"
+                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/app-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5p] %c{1.}[%L] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+        <!-- 错误日志文件 -->
+        <RollingFile name="ErrorFile"
+                     fileName="${sys:user.home}/logs/error.log"
+                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log.gz">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5p] %c{1.}[%L] - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="50"/>
+        </RollingFile>
+    </appenders>
+
+    <loggers>
+        <!-- 框架日志 - 调整为WARN级别减少噪音 -->
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.mybatis" level="WARN"/>
+        <logger name="org.hibernate" level="WARN"/>
+        <logger name="com.zaxxer.hikari" level="WARN"/>
+        <logger name="org.apache" level="WARN"/>
+
+        <!-- SQL日志 - 按需开启 -->
+         <logger name="org.mybatis.spring" level="DEBUG"/>
+         <logger name="java.sql" level="DEBUG"/>
+         <logger name="java.sql.ResultSet" level="DEBUG"/>
+
+        <!-- 业务包日志 - 设置为DEBUG用于开发 -->
+        <logger name="com.hxl" level="DEBUG" additivity="false">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="AppFile"/>
+        </logger>
+
+        <!-- Root logger - 生产环境建议设置为INFO -->
+        <root level="INFO">
+            <appender-ref ref="AppFile"/>
+            <appender-ref ref="ErrorFile"/>
+            <!-- 生产环境注释掉Console -->
+            <appender-ref ref="Console"/>
+        </root>
+    </loggers>
+</configuration>

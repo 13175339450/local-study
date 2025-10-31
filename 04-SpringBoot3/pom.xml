@@ -29,6 +29,7 @@
         <module>demo10-boot-profile</module>
         <module>demo11-spring-boot-test</module>
         <module>demo12-spring-application-listener</module>
+        <module>demo13-event-driven-dev</module>
     </modules>
 
     <properties>
