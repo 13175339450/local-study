@@ -29,6 +29,7 @@
         <module>demo10-boot-profile</module>
         <module>demo11-spring-boot-test</module>
         <module>demo12-spring-application-listener</module>
+        <module>demo13-event-driven-dev</module>
     </modules>
 
     <properties>
@@ -46,6 +47,12 @@
           如果向上面那样不指定版本号，则子模块会优先从手动管理的里面获取依赖，此时发现这个依赖没有指定版本
           从而导致子模块无法下载依赖(手动指定的无版本覆盖了SpringBoot自动管理的版本！)
      -->
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+    </dependencies>
     <dependencyManagement>
         <dependencies>
             <!-- Common 模块 -->
