@@ -30,6 +30,7 @@
         <module>demo11-spring-boot-test</module>
         <module>demo12-spring-application-listener</module>
         <module>demo13-event-driven-dev</module>
+        <module>demo14-boot-auto-configuration</module>
     </modules>
 
     <properties>
