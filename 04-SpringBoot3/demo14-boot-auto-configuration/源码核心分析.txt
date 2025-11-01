@@ -1,0 +1,10 @@
+SpringBoot启动源码分析:
+1. 在执行 SpringApplication.run(Main.class, args); 时，会传入启动类的 Class 对象
+   目的是为了日后能找到该类，并且发现该类上标注的注解！！！从这些注解里，可以实现之后的自动配置。
+
+2. 执行 prepareEnvironment(listeners, bootstrapContext, applicationArguments); 是在
+   启动容器前，准备一些环境(比如系统变量、Java版本信息等，也可以在此阶段自己新增一些环境配置)。
+
+3. prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+   在此判断（是否是@Component衍生注解）并处识别了对应的启动类，为了后续去识别注解以及里面的相关信息。
+
