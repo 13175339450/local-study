@@ -1,8 +1,9 @@
 spring:
   data:
     redis:
-      host: 192.168.7.112
-      # host: hxl-redis
+      # host: 192.168.7.112
+      # Docker容器里使用容器名连接
+      host: hxl-redis
       port: 6379
       password: 123456
       lettuce:

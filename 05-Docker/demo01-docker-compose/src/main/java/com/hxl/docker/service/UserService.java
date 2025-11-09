@@ -12,5 +12,5 @@ public interface UserService {
     /**
      * 查询用户，先查Redis，没有则查MySQL
      */
-    void findUser(Integer id);
+    User findUser(Integer id);
 }

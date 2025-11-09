@@ -23,9 +23,9 @@ public class UserController {
     }
 
     @GetMapping("/get")
-    public void get(@RequestBody UserDTO userDTO) {
+    public User get(@RequestBody UserDTO userDTO) {
         log.info("UserService is : {}", userService);
 
-        userService.findUser(userDTO.getId());
+        return userService.findUser(userDTO.getId());
     }
 }

@@ -8,8 +8,9 @@ spring:
     # 数据库密码
     password: ${DB_PASSWORD:root}
     # 数据库连接URL（替换为你的数据库地址、端口和库名）
-    url: jdbc:mysql://${DATABASE_IP:192.168.7.112}:${DATABASE_PORT:3306}/${DATABASE_NAME:docker_test}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
-    # url: jdbc:mysql://${DATABASE_IP:hxl-mysql}:${DATABASE_PORT:3306}/${DATABASE_NAME:docker_test}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    # url: jdbc:mysql://${DATABASE_IP:192.168.7.112}:${DATABASE_PORT:3306}/${DATABASE_NAME:docker_test}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    # Docker容器里使用容器名连接
+    url: jdbc:mysql://${DATABASE_IP:hxl-mysql}:${DATABASE_PORT:3306}/${DATABASE_NAME:docker_test}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
     # Hikari连接池配置（Spring Boot默认使用Hikari，可选配置）
     hikari:
       # 最小空闲连接数量

@@ -16,7 +16,6 @@ import java.util.Objects;
 public class UserServiceImpl implements UserService {
 
 
-
     @Autowired
     private UserMapper userMapper;
 
@@ -39,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void findUser(Integer id) {
+    public User findUser(Integer id) {
         // 打印依赖注入是否成功
         log.info("UserMapper is : {}, RedisTemplate is : {}", userMapper, redisTemplate);
 
@@ -63,5 +62,7 @@ public class UserServiceImpl implements UserService {
 
         // 打印结果
         log.info("User is : {}", user);
+
+        return user;
     }
 }
