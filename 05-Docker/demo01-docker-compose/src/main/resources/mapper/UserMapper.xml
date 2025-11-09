@@ -3,8 +3,8 @@
 <mapper namespace="com.hxl.docker.mapper.UserMapper">
 
     <insert id="insert">
-        insert into t_user (username, password, sex, deleted, create_time, update_time)
-        values (#{username}, #{password}, #{sex}, #{deleted}, #{creatTime}, #{updateTime})
+        insert into t_user (id, username, password)
+        values (#{id}, #{username}, #{password})
     </insert>
 
     <select id="queryById" resultType="com.hxl.docker.domain.entity.User">

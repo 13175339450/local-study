@@ -7,6 +7,8 @@
     <appenders>
         <!--这个输出控制台的配置-->
         <console name="Console" target="SYSTEM_OUT">
+            <!-- 新增：控制台只显示INFO及以上级别，过滤TRACE和DEBUG日志 -->
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <!--输出日志的格式-->
             <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
         </console>
@@ -51,7 +53,16 @@
         <!--过滤掉spring和mybatis的一些无用的DEBUG信息-->
         <logger name="org.springframework" level="INFO"></logger>
         <logger name="org.mybatis" level="INFO"></logger>
-        <root level="all">
+
+        <!-- 新增：专门关闭Tomcat相关组件的TRACE日志 -->
+        <logger name="org.apache.juli" level="INFO"></logger>      <!-- 关闭Tomcat日志组件的TRACE输出 -->
+        <logger name="org.apache.catalina" level="INFO"></logger>  <!-- 关闭Tomcat容器的TRACE输出 -->
+        <logger name="org.apache.tomcat" level="INFO"></logger>    <!-- 关闭Tomcat核心组件的TRACE输出 -->
+        <logger name="org.apache.coyote" level="INFO"></logger>    <!-- 关闭Tomcat连接器的TRACE输出 -->
+
+        <!-- 修改：将root级别从all改为INFO，全局过滤TRACE和DEBUG日志 -->
+        <!-- 注意：root级别改为INFO后，所有低于INFO级别的日志都不会输出 -->
+        <root level="INFO">
             <appender-ref ref="Console"/>
             <appender-ref ref="RollingFileInfo"/>
             <appender-ref ref="RollingFileWarn"/>

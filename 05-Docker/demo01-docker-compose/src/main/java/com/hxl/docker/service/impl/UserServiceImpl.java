@@ -32,9 +32,7 @@ public class UserServiceImpl implements UserService {
         int row = userMapper.insert(user);
 
         if (row > 0) {
-            // 获取刚才插入的数据，并且存入Redis缓存
-            user = userMapper.queryById(user.getId());
-            // 组合key
+            // 获取刚才插入的数据，并且存入Redis缓存 组合key
             String key = CacheConstant.CACHE_KEY_USER + user.getId();
             redisTemplate.opsForValue().set(key, user);
         }
