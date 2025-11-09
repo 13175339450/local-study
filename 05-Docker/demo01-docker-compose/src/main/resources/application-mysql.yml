@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    # 数据库驱动类（MySQL 8.x用这个，5.x用 com.mysql.jdbc.Driver）
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 数据库用户名
+    username: ${DB_USERNAME:root}
+    # 数据库密码
+    password: ${DB_PASSWORD:root}
+    # 数据库连接URL（替换为你的数据库地址、端口和库名）
+    url: jdbc:mysql://${DATABASE_IP:192.168.7.112}:${DATABASE_PORT:3306}/${DATABASE_NAME:docker_test}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    # Hikari连接池配置（Spring Boot默认使用Hikari，可选配置）
+    hikari:
+      # 最小空闲连接数量
+      minimum-idle: 15
+      # 空闲连接存活最大时间，默认600000（10分钟）
+      idle-timeout: 300000
+      # 连接池最大连接数，默认是10
+      maximum-pool-size: 180
+      # 此属性控制从池返回的连接的默认自动提交行为,默认值：true
+      auto-commit: true
+      # 连接池名称
+      pool-name: dockerHikariCP
+      # 此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+      max-lifetime: 1800000
+      # 数据库连接超时时间,默认30秒，即30000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+# mybatis 配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+# mybatis-plus 配置
+mybatis-plus:
+  configuration:
+    # 开启日志输出
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
