@@ -38,6 +38,7 @@
         <module>demo14-boot-auto-configuration</module>
         <module>demo666-robot-starter</module>
         <module>demo15-robot-starter-test</module>
+        <module>demo16-knife4j-interface-document</module>
     </modules>
 
     <properties>
@@ -79,6 +80,17 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
                 <version>1.2.24</version>
+            </dependency>
+
+            <!-- knife4j 接口文档 -->
+            <dependency>
+                <!--  SpringBoot2.x-->
+                <!--  <groupId>com.github.xiaoymin</groupId>-->
+                <!--  <artifactId>knife4j-spring-boot-starter</artifactId>-->
+                <!--  <version>3.0.2</version>-->
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>4.5.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
