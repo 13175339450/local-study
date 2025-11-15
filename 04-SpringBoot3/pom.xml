@@ -9,6 +9,10 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.13</version>
+        <!-- 确保这里没有 relativePath 或者它的值是空的
+             会默认找上级目录
+        -->
+        <relativePath/>
     </parent>
 
     <groupId>com.hxl</groupId>
@@ -17,6 +21,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>demo00-SpringCommon</module>
         <module>demo01-common-annotation</module>
         <module>demo02-property-auto-configuration</module>
         <module>demo03-hxl-customize-starter</module>
@@ -31,6 +36,8 @@
         <module>demo12-spring-application-listener</module>
         <module>demo13-event-driven-dev</module>
         <module>demo14-boot-auto-configuration</module>
+        <module>demo666-robot-starter</module>
+        <module>demo15-robot-starter-test</module>
     </modules>
 
     <properties>
@@ -56,13 +63,6 @@
     </dependencies>
     <dependencyManagement>
         <dependencies>
-            <!-- Common 模块 -->
-            <dependency>
-                <groupId>com.hxl</groupId>
-                <artifactId>00-SpringCommon</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
-
             <dependency>
                 <groupId>in.hocg.boot</groupId>
                 <artifactId>mybatis-plus-spring-boot-starter</artifactId>
