@@ -2,6 +2,7 @@ package com.hxl.docker.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -31,4 +32,19 @@ public class RedisCofniguration {
 
         return redisTemplate;
     }
+
+    /**TODO:
+     *  当我们自己配置了RedisTemplate后，SpringBoot默认配置的会失效！
+     * @param redisConnectionFactory 自动配置好了连接工厂
+     */
+    @Bean
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<Object, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+        // 配置序列化工具为 json 字符串的 => 把对象转换成JSON
+        template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+        return template;
+
+    }
+
 }
