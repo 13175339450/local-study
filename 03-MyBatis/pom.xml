@@ -15,6 +15,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>demo01-lazy-load</module>
+        <module>demo02-query-cache</module>
     </modules>
 
     <properties>

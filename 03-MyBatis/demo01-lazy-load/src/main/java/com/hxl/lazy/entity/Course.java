@@ -2,6 +2,9 @@ package com.hxl.lazy.entity;
 
 import java.util.List;
 
+/**
+ * @author hengxiaoliang
+ */
 public class Course {
 
     private Long courseId;

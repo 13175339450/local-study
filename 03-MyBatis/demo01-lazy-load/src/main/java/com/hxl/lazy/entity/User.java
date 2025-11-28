@@ -1,6 +1,8 @@
 package com.hxl.lazy.entity;
 
-
+/**
+ * @author hengxiaoliang
+ */
 public class User {
 
     private Long userId;
