@@ -1,5 +1,6 @@
 package com.hxl.lazy;
 
+import com.hxl.lazy.entity.Course;
 import com.hxl.lazy.entity.User;
 import com.hxl.lazy.mapper.CourseMapper;
 import com.hxl.lazy.mapper.UserMapper;
@@ -34,5 +35,25 @@ public class LazyLoadMybatisTest {
         System.out.println("==========================");
         // 直接打印对应属性，此时执行第二条SQL，查询对应数据
         System.out.println(userInfo.getCourse().getCourseName());
+    }
+
+    /**
+     * 测试一对多
+     */
+    @Test
+    public void testOneForMore() {
+        Course course = courseMapper.queryCourse(101L);
+        System.out.println("==========================");
+
+        // 1.此处没有涉及到User，所以没有加载
+        System.out.println(course.getCourseName());
+
+        System.out.println("==========================");
+        // 即使调用toString这种隐式方法也不加载（配置里设置了）
+        System.out.println(course);
+
+        System.out.println("==========================");
+        // 直接打印对应属性，此时执行第二条SQL，查询对应数据
+        System.out.println(course.getUsers().get(0).getUsername());
     }
 }

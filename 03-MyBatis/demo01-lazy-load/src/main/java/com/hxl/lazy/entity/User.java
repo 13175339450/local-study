@@ -2,8 +2,11 @@ package com.hxl.lazy.entity;
 
 
 public class User {
+
     private Long userId;
+
     private String username;
+
     private Course course;
 
     public Long getUserId() {

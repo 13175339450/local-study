@@ -1,8 +1,23 @@
 package com.hxl.lazy.entity;
 
+import java.util.List;
+
 public class Course {
+
     private Long courseId;
+
     private String courseName;
+
+    // 一对多
+    private List<User> users;
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
 
     public Long getCourseId() {
         return courseId;

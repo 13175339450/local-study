@@ -7,4 +7,25 @@
         from t_course
         where course_id = #{courseId}
     </select>
+
+    <!-- TODO: column的指必须是SQL字段别名的值！不包括驼峰转换！！！ -->
+    <resultMap id="oneForMore" type="com.hxl.lazy.entity.Course">
+        <!-- 指定主键可以提升效率 -->
+        <id property="courseId" column="cid"/>
+
+        <!-- 指定其它属性 -->
+        <result property="courseName" column="course_name"/>
+
+        <!-- 一对多关联 -->
+        <!-- select属性定义子查询对应的接口方法的全限定名:  namespace.id -->
+        <association property="users" column="cid"
+                     select="com.hxl.lazy.mapper.UserMapper.queryUserInfo"
+                     fetchType="lazy"/>
+    </resultMap>
+
+    <select id="queryCourse" resultMap="oneForMore">
+        select course_id as cid, course_name
+        from t_course
+        where course_id = #{courseId}
+    </select>
 </mapper>
