@@ -1,7 +1,9 @@
 package com.hxl.cache;
 
 import com.hxl.cache.entity.Course;
+import com.hxl.cache.entity.User;
 import com.hxl.cache.mapper.CourseMapper;
+import com.hxl.cache.mapper.UserMapper;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +14,9 @@ public class QueryCacheTest {
 
     @Resource
     private CourseMapper courseMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
     /**
      * TODO: 测试一级缓存，同一个sqlSession里开启一级缓存
@@ -27,5 +32,14 @@ public class QueryCacheTest {
 
         Course course2 = courseMapper.queryCourse(101L);
         System.out.println(course2);
+    }
+
+    @Test
+    public void testTowCache() {
+        User user1 = userMapper.queryUser(1L);
+        System.out.println(user1);
+
+        User user2 = userMapper.queryUser(1L);
+        System.out.println(user2);
     }
 }
